@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-exqmAYTL9rfC512QX0MSUNNK2IU95u5ZWW12J9OGUT4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: https://kgphnxetehgtlrjyvhmg.supabase.co; connect-src 'self' https://kgphnxetehgtlrjyvhmg.supabase.co wss://kgphnxetehgtlrjyvhmg.supabase.co https://api.pwnedpasswords.com; object-src 'none'; base-uri 'self'">
+<title>Mi panel — LA VOZ</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="stylesheet" href="estilos.css?v=20261014-auditoria">
+<script src="supabase-js.min.js"></script>
+<script src="html2canvas.min.js"></script>
+<script src="config.js"></script>
+<script src="misiones.js"></script>
+</head>
+<body>
+
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="index.html"><img src="img/web-2.png" alt="LA VOZ">LA VOZ</a>
+    <div class="head-actions">
+      <button class="btn btn-ingresar ghost" data-act="cerrarSesion">Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="padding-bottom:60px">
+
+  <div id="aviso-demo" class="aviso demo" style="margin-top:18px">
+    <strong>Modo demostración.</strong> Estás viendo el panel con datos de prueba (el backend aún no está
+    conectado). Nada de lo que hagas acá se guarda en un servidor.
+  </div>
+  <div id="demo-switch" class="demo-switch" style="display:none">
+    <span><strong>Vista previa de roles:</strong></span>
+    <span id="demo-roles"></span>
+  </div>
+  <div id="aviso" class="aviso"></div>
+
+  <!-- ============================ IDENTIDAD ============================ -->
+  <div class="panel-head">
+    <div class="miembro-id">
+      <img src="img/web-2.png" alt="LA VOZ">
+      <div>
+        <div class="nombre" id="mi-nombre"><span class="skl nombre" aria-hidden="true"></span></div>
+        <div>
+          <span class="badge rango" id="mi-rango">—</span>
+          <span class="badge lvz" id="mi-lvz">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="zona-celebracion"></div>
+
+  <!-- ============================ MI CAMINO ============================
+       Primera zona del panel (B1-31): al entrar, la primera misión es
+       la única siguiente acción destacada. -->
+  <section class="seccion" id="seccion-camino">
+    <h2>Mi camino</h2>
+    <p class="desc" id="camino-desc">Tus misiones para el siguiente rango.</p>
+    <div class="progreso-barra"><div id="barra-progreso"></div></div>
+    <div class="progreso-txt" id="texto-progreso"></div>
+    <div id="lista-misiones"><div class="skl mision" aria-hidden="true"></div><div class="skl mision" aria-hidden="true"></div><div class="skl mision" aria-hidden="true"></div></div>
+    <p style="color:var(--gray);font-size:1rem;margin-top:16px">
+      Completar las misiones te habilita para el ascenso. Hasta Orador, el rango lo
+      mueve tu Guía dentro de tu célula; Guía y Maestro los designa el Fundador,
+      con el Acta de Ascenso firmada.
+    </p>
+  </section>
+
+  <div class="grid2">
+    <!-- ============================ MI CÉLULA ============================ -->
+    <section class="card">
+      <h3>Mi célula</h3>
+      <div id="mi-celula"><span class="skl linea" style="width:70%" aria-hidden="true"></span><span class="skl linea" style="width:45%" aria-hidden="true"></span></div>
+    </section>
+
+    <!-- ============================ MI CARNET ============================ -->
+    <section class="card">
+      <h3>Mi carnet</h3>
+      <div class="carnet" id="carnet">
+        <div class="c-head">
+          <img src="img/web-2.png" alt="">
+          <div>
+            <div class="c-brand">LA VOZ</div>
+            <div class="c-sub">CARNET DE INTEGRANTE</div>
+          </div>
+        </div>
+        <div class="c-nombre" id="carnet-nombre">—</div>
+        <div class="c-fila">
+          <div><div class="k">N.º DE INTEGRANTE</div><div class="v" id="carnet-lvz">—</div></div>
+          <div><div class="k">RANGO</div><div class="v" id="carnet-rango">—</div></div>
+        </div>
+        <div class="c-motto">Nadie se forja solo.</div>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn small" data-act="descargarCarnet">Descargar mi carnet (PNG)</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Las secciones de Guía y de Fundador se construyen por JavaScript SOLO
+       si el rango del hermano lo habilita. Un hermano sin ese rango ni
+       siquiera recibe ese HTML. La barrera real, de todos modos, vive en el
+       backend: políticas RLS + la RPC `set_rank` (que exige rank='fundador'
+       en el servidor) verifican el rol en cada llamada. -->
+  <div id="zona-datos"></div>
+  <div id="zona-referidos"></div>
+  <div id="zona-documentos"></div>
+  <div id="zona-solicitud"></div>
+  <div id="zona-guia"></div>
+  <div id="zona-admin"></div>
+
+</main>
+
+<footer class="site">
+  <div class="f-motto">Nadie se forja solo.</div>
+  <div>LA VOZ — Hermandad de la palabra, el ejemplo y el cuerpo.</div>
+</footer>
+
+<script>
+/* ==========================================================================
+   PANEL DEL HERMANO
+   Fuentes de datos (backend Supabase — fuente de verdad: ../backend/schema.sql
+   y ../backend/storage.sql; ver config.js y README.md):
+     profiles(id, full_name, lvz_number, lvz_code, rank, cell_id,
+              status, welcome_sent_at, created_at, referred_by)
+       — la columna email NO se lee por consulta directa: los privilegios
+         por columna de la base la reservan (el correo propio sale de la
+         sesión de Auth; el del padrón completo, de la RPC
+         founder_members_admin). rank es el enum del backend:
+         aspirante|iniciado|orador|guia|maestro|fundador (Fundador NO es una
+         marca aparte: es el valor 'fundador' de la columna rank).
+     cells(id, name, city, country, meeting_place, meeting_day, guide_id)
+       — el Guía de una célula es cells.guide_id; de ahí nacen sus derechos
+         de revisión, no de su propio cell_id.
+     missions(key, from_rank, to_rank, pillar, kind, title, rubric, sort)
+     submissions(id, user_id, mission_key, storage_path, note, status,
+                 reviewed_by, reviewed_at, review_note)
+       — status: pendiente|en_revision|aprobada|rechazada. El "progreso" del
+         panel se DERIVA de los envíos: no existe tabla de progreso.
+     rank_history — bitácora de cambios de rango (set_rank la escribe).
+     Storage: bucket privado "videos", ruta = {user_id}/{mission_key}/{archivo}
+   ========================================================================== */
+
+const MISION_POR_ID = {};
+Object.values(MISIONES_POR_RANGO).flat().forEach(m => { MISION_POR_ID[m.id] = m; });
+
+/* Columnas de `profiles` que el panel lee por consulta directa. La base
+   concede SELECT solo sobre esta lista (privilegios por columna, A6):
+   sin email, sin dob, sin privacy_accepted_at. Nada de select("*"). */
+const COLUMNAS_PERFIL = "id, full_name, lvz_number, lvz_code, rank, cell_id, status, referred_by, created_at, welcome_sent_at";
+
+const ESTADO = {
+  demo: !BACKEND_ACTIVO,
+  usuarioId: null,
+  perfil: null,     // fila de profiles: {id, full_name, lvz_number, lvz_code, rank, cell_id, status}
+  celula: null,     // fila de cells + guia_nombre resuelto: {name, meeting_day, meeting_place, guide_id, guia_nombre}
+  celulaGuiada: null, // la célula donde soy guide_id (solo Guía/Maestro)
+  progreso: {},     // mission_key -> {estado, storage_path, review_note, sub_id} (derivado de submissions)
+  miembrosCelula: [],   // solo Guía/Maestro
+  progresoCelula: {},   // usuario_id -> {mision_id -> registro} (Guía)
+  revisiones: [],       // registros en_revision de mi célula (Guía)
+  todosMiembros: [],    // solo Fundador
+  celulasPorId: {},
+  datosPropios: null,   // {whatsapp, pais, estado, ciudad, documento} — solo mi fila (RPC my_contact_data)
+};
+
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function mostrarAviso(texto, tipo) {
+  const a = document.getElementById("aviso");
+  a.textContent = texto;
+  a.className = "aviso visible " + tipo;
+  a.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+function badgeEstado(estado) {
+  const txt = { pendiente: "Pendiente", en_revision: "En revisión", aprobada: "Aprobada", rechazada: "Devuelta" }[estado] || estado;
+  return `<span class="badge ${estado}">${txt}</span>`;
+}
+
+/* Acciones de los botones (también los generados por JS): NADA de onclick
+   inline — la CSP de la página solo permite scripts propios o con hash y
+   bloquearía los atributos onclick. Un único listener delegado despacha
+   por data-act / data-a / data-b / data-c hacia esta tabla. */
+function cerrarFicha() {
+  const z = document.getElementById("ficha-miembro");
+  if (z) z.innerHTML = "";
+}
+const ACCIONES = {
+  cerrarSesion: () => cerrarSesion(),
+  cerrarCelebracion: () => cerrarCelebracion(),
+  irAPrimeraMision: () => {
+    const s = document.getElementById("seccion-camino");
+    if (s) s.scrollIntoView({ behavior: "smooth", block: "start" });
+  },
+  cerrarFicha: () => cerrarFicha(),
+  descargarCarnet: () => descargarCarnet(),
+  guardarMisDatos: () => guardarMisDatos(),
+  copiarEnlaceReferido: () => copiarEnlaceReferido(),
+  enviarSolicitud: () => enviarSolicitud(),
+  crearMiCelula: () => crearMiCelula(),
+  adminCrearCelula: () => adminCrearCelula(),
+  adminPublicarDocumento: () => adminPublicarDocumento(),
+  mostrarTabAdmin: a => mostrarTabAdmin(a),
+  demoCambiarRol: a => demoCambiarRol(a),
+  subirVideo: a => subirVideo(a),
+  solicitarAtestacion: a => solicitarAtestacion(a),
+  guiaAsignarRango: a => guiaAsignarRango(a),
+  sumarAMiCelula: a => sumarAMiCelula(a),
+  adminVerFicha: a => adminVerFicha(a),
+  adminAsignarRango: a => adminAsignarRango(a),
+  adminQuitarCelula: a => adminQuitarCelula(a),
+  adminNombrarGuia: a => adminNombrarGuia(a),
+  descargarDocumento: a => descargarDocumento(Number(a)),
+  adminAlternarDocumento: a => adminAlternarDocumento(Number(a)),
+  adminQuitarDocumento: a => adminQuitarDocumento(Number(a)),
+  aprobarSolicitud: a => aprobarSolicitud(Number(a)),
+  rechazarSolicitud: a => rechazarSolicitud(Number(a)),
+  verVideoPendiente: a => verVideoPendiente(Number(a)),
+  descargarVideoPendiente: a => descargarVideoPendiente(Number(a)),
+  verVideoRevision: (a, b) => verVideoRevision(a, b),
+  descargarVideoRevision: (a, b) => descargarVideoRevision(a, b),
+  resolverRevision: (a, b, c) => resolverRevision(a, b, c === "true"),
+  resolverRevisionFundador: (a, b) => resolverRevisionFundador(Number(a), b === "true"),
+};
+document.addEventListener("click", function (e) {
+  const t = e.target && e.target.closest ? e.target.closest("[data-act]") : null;
+  if (!t) return;
+  const fn = ACCIONES[t.getAttribute("data-act")];
+  if (fn) fn(t.getAttribute("data-a"), t.getAttribute("data-b"), t.getAttribute("data-c"));
+});
+
+/* Convierte filas de `submissions` (ordenadas por created_at ascendente) en
+   el mapa de pantalla { mission_key -> {estado, storage_path, review_note,
+   sub_id} }. Regla: manda el envío "vivo" (pendiente/en_revision/aprobada;
+   el índice único de la base garantiza a lo sumo uno por misión); un envío
+   vivo en 'pendiente' o 'en_revision' se muestra "en_revision" (ya salió de
+   las manos del integrante y espera revisión); si solo hay envíos
+   'rechazada', se muestra el último como "Devuelta" y puede reenviarse. */
+function progresoDesdeSubmissions(filas) {
+  const mapa = {};
+  (filas || []).forEach(s => {
+    const estado = s.status === "aprobada" ? "aprobada"
+      : s.status === "rechazada" ? "rechazada" : "en_revision";
+    const prev = mapa[s.mission_key];
+    if (prev && prev.estado === "aprobada" && estado !== "aprobada") return;
+    mapa[s.mission_key] = {
+      estado,
+      storage_path: s.storage_path || null,
+      review_note: s.review_note || null,
+      sub_id: s.id,
+    };
+  });
+  return mapa;
+}
+
+/* ============================ DATOS DEMO ============================
+   Los datos de prueba tienen LA MISMA forma que el esquema real
+   (profiles / cells / submissions de ../backend/schema.sql). */
+function cargarDemo() {
+  const nombreGuardado = (() => { try { return sessionStorage.getItem("lavoz_demo_nombre"); } catch (e) { return null; } })();
+  ESTADO.usuarioId = "demo-yo";
+  ESTADO.perfil = {
+    id: "demo-yo",
+    full_name: nombreGuardado || "Hermano Demo",
+    email: "demo@lavoz.example",
+    lvz_number: 123,
+    lvz_code: "LVZ-0123",
+    rank: "aspirante",
+    cell_id: "demo-celula",
+    status: "active",
+  };
+  ESTADO.celula = {
+    id: "demo-celula", name: "Célula Central", city: null, country: null,
+    meeting_day: "Sábados · 10:00", meeting_place: "Punto de encuentro de la célula",
+    guide_id: "demo-g1", guia_nombre: "Guía Demo",
+  };
+  ESTADO.celulaGuiada = ESTADO.celula;
+  ESTADO.progreso = {
+    "asp_ini_ejemplo_logistica": { estado: "aprobada", storage_path: null, review_note: null, sub_id: "demo-s1" },
+    "asp_ini_palabra_video": { estado: "en_revision", storage_path: "demo-yo/asp_ini_palabra_video/demo.mp4", review_note: null, sub_id: "demo-s2" },
+  };
+  ESTADO.miembrosCelula = [
+    { id: "demo-m1", full_name: "Hermano Uno", lvz_number: 124, lvz_code: "LVZ-0124", rank: "aspirante", cell_id: "demo-celula", status: "active" },
+    { id: "demo-m2", full_name: "Hermano Dos", lvz_number: 125, lvz_code: "LVZ-0125", rank: "iniciado", cell_id: "demo-celula", status: "active" },
+    { id: "demo-m3", full_name: "Hermano Tres", lvz_number: 126, lvz_code: "LVZ-0126", rank: "orador", cell_id: "demo-celula", status: "active" },
+  ];
+  ESTADO.progresoCelula = {
+    "demo-m1": { "asp_ini_palabra_video": { estado: "en_revision", storage_path: "demo-m1/asp_ini_palabra_video/discurso.mp4", review_note: null, sub_id: "demo-s3" } },
+    "demo-m2": { "ini_ora_palabra_video": { estado: "en_revision", storage_path: "demo-m2/ini_ora_palabra_video/grabado.mp4", review_note: null, sub_id: "demo-s4" } },
+    "demo-m3": {},
+  };
+  ESTADO.todosMiembros = [
+    ESTADO.perfil,
+    ...ESTADO.miembrosCelula,
+    { id: "demo-g1", full_name: "Guía Demo", lvz_number: 100, lvz_code: "LVZ-0100", rank: "guia", cell_id: "demo-celula", status: "active" },
+  ];
+  ESTADO.celulasPorId = { "demo-celula": { id: "demo-celula", name: "Célula Central" } };
+  ESTADO.datosPropios = {
+    whatsapp: "", pais: "", estado: "", ciudad: "", documento: "",
+  };
+  ESTADO.todosMiembros.forEach((m, i) => {
+    m.whatsapp = "+598 99 000 00" + i;
+    m.pais = "Uruguay"; m.estado = "Montevideo"; m.ciudad = "Montevideo";
+    m.documento = "Documento demo " + (i + 1);
+  });
+
+  document.getElementById("aviso-demo").classList.add("visible");
+  const sw = document.getElementById("demo-switch");
+  sw.style.display = "flex";
+  const roles = [...RANGOS, RANGO_FUNDADOR];
+  document.getElementById("demo-roles").innerHTML = roles.map(r =>
+    `<button data-rol="${r}" data-act="demoCambiarRol" data-a="${r}">${nombreRango(r)}</button>`).join(" ");
+  demoMarcarRolActivo();
+}
+function demoMarcarRolActivo() {
+  const actual = ESTADO.perfil.rank;
+  document.querySelectorAll("#demo-roles button").forEach(b =>
+    b.classList.toggle("activo", b.getAttribute("data-rol") === actual));
+}
+function demoCambiarRol(rol) {
+  ESTADO.perfil.rank = rol;
+  if (rol === RANGO_FUNDADOR) {
+    ESTADO.perfil.full_name = "Fundador (demo)";
+    ESTADO.perfil.lvz_number = 1;
+    ESTADO.perfil.lvz_code = "LVZ-0001";
+  } else {
+    if (ESTADO.perfil.lvz_code === "LVZ-0001") {
+      ESTADO.perfil.lvz_number = 123;
+      ESTADO.perfil.lvz_code = "LVZ-0123";
+    }
+    if (ESTADO.perfil.full_name === "Fundador (demo)") ESTADO.perfil.full_name = "Hermano Demo";
+  }
+  demoMarcarRolActivo();
+  renderTodo();
+}
+
+/* ============================ CARGA REAL ============================ */
+async function fijarCelula(cel) {
+  ESTADO.celula = cel;
+  if (cel.guide_id === ESTADO.usuarioId) {
+    ESTADO.celula.guia_nombre = "Vos";
+  } else if (cel.guide_id) {
+    const sb = getSupabase();
+    const { data: guia } = await sb.from(TABLA_PROFILES)
+      .select("full_name").eq("id", cel.guide_id).single();
+    if (guia) ESTADO.celula.guia_nombre = guia.full_name;
+  }
+}
+
+async function cargarReal() {
+  const sb = getSupabase();
+  const { data: ses } = await sb.auth.getSession();
+  if (!ses || !ses.session) { window.location.href = "ingresar.html"; return; }
+  ESTADO.usuarioId = ses.session.user.id;
+
+  const { data: perfil, error } = await sb
+    .from(TABLA_PROFILES).select(COLUMNAS_PERFIL).eq("id", ESTADO.usuarioId).single();
+  if (error || !perfil) {
+    /* Sin fila visible: la cuenta puede estar desactivada (la RLS solo deja
+       leer perfiles 'active') o el perfil aún no se creó. */
+    mostrarAviso("Tu cuenta existe, pero tu perfil de hermano no está disponible. Avisale al Fundador.", "error");
+    return;
+  }
+  ESTADO.perfil = perfil;
+
+  /* Mi célula de membresía (profiles.cell_id) */
+  if (perfil.cell_id) {
+    const { data: cel } = await sb.from(TABLA_CELLS).select("*").eq("id", perfil.cell_id).single();
+    if (cel) await fijarCelula(cel);
+  }
+
+  /* Mis envíos → mi progreso (derivado de submissions) */
+  const { data: subs } = await sb.from(TABLA_SUBMISSIONS)
+    .select("*").eq("user_id", ESTADO.usuarioId).order("created_at", { ascending: true });
+  ESTADO.progreso = progresoDesdeSubmissions(subs || []);
+
+  /* Guía/Maestro: mi célula ES la que tiene guide_id = yo (modelo del
+     backend). Sus hermanos son los profiles con ese cell_id, y sus envíos
+     son los que yo reviso. */
+  if (perfil.rank === "guia" || perfil.rank === "maestro") {
+    const { data: guiadas } = await sb.from(TABLA_CELLS)
+      .select("*").eq("guide_id", ESTADO.usuarioId).limit(1);
+    const cel = guiadas && guiadas[0];
+    if (cel) {
+      ESTADO.celulaGuiada = cel;
+      if (!ESTADO.celula) await fijarCelula(cel);
+      const { data: hermanos } = await sb.from(TABLA_PROFILES)
+        .select(COLUMNAS_PERFIL).eq("cell_id", cel.id).neq("id", ESTADO.usuarioId);
+      ESTADO.miembrosCelula = hermanos || [];
+      const ids = ESTADO.miembrosCelula.map(m => m.id);
+      if (ids.length) {
+        const { data: subsCel } = await sb.from(TABLA_SUBMISSIONS)
+          .select("*").in("user_id", ids).order("created_at", { ascending: true });
+        const porUsuario = {};
+        (subsCel || []).forEach(s => {
+          if (!porUsuario[s.user_id]) porUsuario[s.user_id] = [];
+          porUsuario[s.user_id].push(s);
+        });
+        Object.keys(porUsuario).forEach(uid => {
+          ESTADO.progresoCelula[uid] = progresoDesdeSubmissions(porUsuario[uid]);
+        });
+      }
+    }
+  }
+
+  /* Fundador: rank === 'fundador' — lee a todos (RLS profiles_read_founder) */
+  if (perfil.rank === RANGO_FUNDADOR) {
+    const { data: todos } = await sb.from(TABLA_PROFILES).select(COLUMNAS_PERFIL).order("lvz_number");
+    ESTADO.todosMiembros = todos || [];
+    /* Confirmación del correo y último ingreso: viven en auth.users; la
+       RPC founder_members_admin (solo Fundador) los trae para la tabla y
+       la ficha de cada hermano. Si la RPC aún no existe, el panel sigue. */
+    const { data: adminExtra } = await sb.rpc("founder_members_admin");
+    if (adminExtra) {
+      const porIdAdmin = {};
+      adminExtra.forEach(r => { porIdAdmin[r.id] = r; });
+      ESTADO.todosMiembros.forEach(m => {
+        const x = porIdAdmin[m.id];
+        if (x) {
+          m.email_confirmed = x.email_confirmed;
+          m.last_sign_in_at = x.last_sign_in_at;
+          if (x.email) m.email = x.email;
+          /* Datos de contacto e identidad (02000): solo el Fundador los
+             recibe, por esta misma RPC — no hay grant de columna. */
+          m.whatsapp = x.whatsapp;
+          m.pais = x.pais;
+          m.estado = x.estado;
+          m.ciudad = x.ciudad;
+          m.documento = x.documento;
+        }
+      });
+    }
+    const { data: cels } = await sb.from(TABLA_CELLS).select("id, name");
+    (cels || []).forEach(c => { ESTADO.celulasPorId[c.id] = c; });
+    /* El Fundador revisa TODO: carga todos los envíos para su panel de
+       revisiones (ver / descargar / atestiguar / devolver cualquier video). */
+    const { data: subsTodos } = await sb.from(TABLA_SUBMISSIONS)
+      .select("*").order("created_at", { ascending: true });
+    ESTADO.submissionsTodos = subsTodos || [];
+  }
+  /* Documentos publicados: la RLS ya filtra por rango (el fundador ve todos). */
+  const { data: docs } = await sb.from(TABLA_DOCUMENTS)
+    .select("*").order("created_at", { ascending: false });
+  ESTADO.documentos = docs || [];
+  /* Solicitudes de célula: la mía (formulario/estado) y, si soy fundador,
+     todas (para resolverlas desde Administración). */
+  const { data: misSol } = await sb.from(TABLA_CELL_APPLICATIONS)
+    .select("*").eq("user_id", ESTADO.usuarioId)
+    .order("created_at", { ascending: false });
+  ESTADO.miSolicitud = (misSol && misSol[0]) || null;
+  if (perfil.rank === RANGO_FUNDADOR) {
+    const { data: sols } = await sb.from(TABLA_CELL_APPLICATIONS)
+      .select("*").order("created_at", { ascending: false });
+    ESTADO.solicitudes = sols || [];
+    /* Visitas a la web (contador propio): total y últimos 30 días. */
+    const { count: totalVisitas } = await sb.from("page_views")
+      .select("*", { count: "exact", head: true });
+    const hace30 = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+    const { data: ultimas } = await sb.from("page_views")
+      .select("created_at").gte("created_at", hace30)
+      .order("created_at", { ascending: false });
+    ESTADO.visitas = { total: totalVisitas || 0, filas: ultimas || [] };
+  }
+  /* Mis referidos ("cada uno trae uno"): a quiénes traje yo. */
+  const { data: refs } = await sb.rpc("my_referrals");
+  ESTADO.referidos = refs || [];
+  /* Mis datos de contacto e identidad (02000): la RPC my_contact_data
+     devuelve SOLO mi fila. Las columnas no tienen grant de lectura
+     general: ni mis compañeros de célula ni mi Guía pueden verlas. */
+  const { data: misDatos } = await sb.rpc("my_contact_data");
+  ESTADO.datosPropios = (misDatos && misDatos[0]) || {};
+  /* Los hermanos de mi célula (nombre, rango, quién guía). */
+  const { data: mates } = await sb.rpc("my_cellmates");
+  ESTADO.hermanosCelula = mates || [];
+  /* Celebración de ascenso: si el rango subió desde la última vez que
+     este dispositivo vio el panel, lo recibimos con la noticia y lo que
+     se le acaba de desbloquear. Vale para cualquier vía de ascenso
+     (Fundador, guía de su célula, designación): compara el rango que
+     tiene contra el último visto, no quién hizo el clic. */
+  try {
+    const clave = "lvz_rango_visto_" + ESTADO.usuarioId;
+    const visto = localStorage.getItem(clave);
+    const orden = r => [...RANGOS, RANGO_FUNDADOR].indexOf(r);
+    if (visto === null) {
+      localStorage.setItem(clave, perfil.rank);
+    } else if (orden(perfil.rank) > orden(visto)) {
+      ESTADO.celebracion = {
+        rango: perfil.rank,
+        desbloqueados: (ESTADO.documentos || []).filter(d => d.min_rank === perfil.rank),
+      };
+      localStorage.setItem(clave, perfil.rank);
+    } else if (visto !== perfil.rank) {
+      localStorage.setItem(clave, perfil.rank);
+    }
+  } catch (err) {}
+  renderTodo();
+}
+
+/* ============================ RENDER: IDENTIDAD ============================ */
+function renderIdentidad() {
+  const p = ESTADO.perfil;
+  document.getElementById("mi-nombre").textContent = p.full_name;
+  document.getElementById("mi-rango").textContent = nombreRango(p.rank);
+  document.getElementById("mi-lvz").textContent = p.lvz_code || "Sin número asignado";
+  document.getElementById("carnet-nombre").textContent = p.full_name;
+  document.getElementById("carnet-lvz").textContent = p.lvz_code || "—";
+  document.getElementById("carnet-rango").textContent = nombreRango(p.rank);
+}
+function renderCelula() {
+  const c = ESTADO.celula;
+  const el = document.getElementById("mi-celula");
+  if (!c) {
+    /* Estado vacío accionable (B1-29): declara el estado y enlaza a la
+       tarea que lo llena — no es un callejón sin salida. */
+    el.innerHTML = `<p style="color:#CFCFCF">Todavía no tenés una célula asignada: ese es tu estado hoy, no un error.</p>
+    <p style="color:var(--gray);margin-top:8px">Tu siguiente paso: escribinos por WhatsApp y te sumamos a la próxima sesión. Y si querés fundar la tuya, presentá tu solicitud en esta misma página, más abajo.</p>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn small" href="https://wa.me/59891311418?text=Hola%2C%20todav%C3%ADa%20no%20tengo%20c%C3%A9lula%20asignada%20en%20LA%20VOZ" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+      <a class="btn small ghost" href="#zona-solicitud">Presentar mi solicitud</a>
+    </div>`;
+    return;
+  }
+  const zona = [c.city, c.country].filter(Boolean).join(", ");
+  el.innerHTML = `
+    <p><strong style="color:var(--white)">${esc(c.name)}</strong>${zona ? ` <span style="color:var(--gray)">· ${esc(zona)}</span>` : ""}</p>
+    <p style="color:#CFCFCF">Guía: ${esc(c.guia_nombre || "—")}</p>
+    <p style="color:#CFCFCF">Sesión: ${esc(c.meeting_day || "—")}</p>
+    <p style="color:#CFCFCF">Lugar: ${esc(c.meeting_place || "—")}</p>
+    ${ESTADO.hermanosCelula && ESTADO.hermanosCelula.length ? `
+    <p style="color:#CFCFCF;margin-top:16px">Tus hermanos en esta célula:</p>
+    ${ESTADO.hermanosCelula.map(h => `
+    <p style="padding:8px 0;border-bottom:1px solid var(--line);color:#CFCFCF">${esc(h.full_name)} <span style="color:var(--gray)">· ${esc(nombreRango(h.rank))}${h.is_guide ? " · tu Guía" : ""}</span></p>`).join("")}` : ``}`;
+}
+function descargarCarnet() {
+  const nodo = document.getElementById("carnet");
+  html2canvas(nodo, { backgroundColor: "#0A0A0A", scale: 2 }).then(canvas => {
+    const a = document.createElement("a");
+    a.download = "carnet-" + (ESTADO.perfil.lvz_code || "lavoz") + ".png";
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+  });
+}
+
+/* ============================ RENDER: MIS DATOS ============================
+   WhatsApp, ubicación y documento del propio hermano (migración 02000).
+   Se leen con la RPC my_contact_data (solo mi fila) y se guardan con
+   update_my_contact (el servidor toca solo mis cinco columnas). */
+function renderMisDatos() {
+  const zona = document.getElementById("zona-datos");
+  const d = ESTADO.datosPropios || {};
+  const campo = "background:#141414;border:1px solid var(--line);color:var(--white);border-radius:8px;padding:10px 12px;width:100%;font:inherit";
+  const faltan = !(d.whatsapp && d.pais && d.estado && d.ciudad && d.documento);
+  zona.innerHTML = `
+  <section class="seccion">
+    <h2>Mis datos</h2>
+    <p class="desc">Tu WhatsApp, dónde vivís y tu documento de identidad. Estos datos forman parte de tu registro como hermano.</p>
+    <div class="card">
+      ${faltan ? `<p style="color:#E8B04B;margin-bottom:12px">Todavía te faltan datos por completar: llenalos y guardá para completar tu registro de hermano.</p>` : ""}
+      <div style="display:grid;gap:10px">
+        <input type="tel" id="datos-whatsapp" placeholder="WhatsApp (con código de país) *" value="${esc(d.whatsapp || "")}" style="${campo}">
+        <input type="text" id="datos-pais" placeholder="País *" value="${esc(d.pais || "")}" style="${campo}">
+        <input type="text" id="datos-estado" placeholder="Estado, provincia o departamento *" value="${esc(d.estado || "")}" style="${campo}">
+        <input type="text" id="datos-ciudad" placeholder="Ciudad *" value="${esc(d.ciudad || "")}" style="${campo}">
+        <input type="text" id="datos-documento" placeholder="Documento de identidad *" value="${esc(d.documento || "")}" style="${campo}">
+        <button class="btn" data-act="guardarMisDatos">Guardar mis datos</button>
+      </div>
+    </div>
+  </section>`;
+}
+
+async function guardarMisDatos() {
+  const val = id => ((document.getElementById(id) || {}).value || "").trim();
+  const datos = {
+    whatsapp: val("datos-whatsapp"),
+    pais: val("datos-pais"),
+    estado: val("datos-estado"),
+    ciudad: val("datos-ciudad"),
+    documento: val("datos-documento"),
+  };
+  if (!datos.whatsapp || !datos.pais || !datos.estado || !datos.ciudad || !datos.documento) {
+    mostrarAviso("Completá todos tus datos: WhatsApp, país, estado/departamento, ciudad y documento.", "error");
+    return;
+  }
+  if (datos.whatsapp.replace(/\D/g, "").length < 8) {
+    mostrarAviso("El WhatsApp necesita al menos 8 dígitos, con código de país.", "error");
+    return;
+  }
+  if (ESTADO.demo) {
+    ESTADO.datosPropios = datos;
+    renderMisDatos();
+    mostrarAviso("Modo demostración: tus datos quedarían guardados así.", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const { error } = await sb.rpc("update_my_contact", {
+    p_whatsapp: datos.whatsapp,
+    p_pais: datos.pais,
+    p_estado: datos.estado,
+    p_ciudad: datos.ciudad,
+    p_documento: datos.documento,
+  });
+  if (error) { mostrarAviso("No se pudieron guardar tus datos: " + error.message, "error"); return; }
+  ESTADO.datosPropios = datos;
+  renderMisDatos();
+  mostrarAviso("Datos guardados.", "ok");
+}
+
+/* ============================ RENDER: MI CAMINO ============================ */
+function renderCamino() {
+  const rango = ESTADO.perfil.rank;
+  const sig = siguienteRango(rango);
+  const desc = document.getElementById("camino-desc");
+  const lista = document.getElementById("lista-misiones");
+  const barra = document.getElementById("barra-progreso");
+  const texto = document.getElementById("texto-progreso");
+
+  if (rango === RANGO_FUNDADOR) {
+    desc.textContent = "Sos el Fundador: no hay rango sobre el tuyo. Tu camino es la hermandad entera — otorgás los rangos desde Administración.";
+    barra.style.width = "100%";
+    texto.textContent = "";
+    lista.innerHTML = "";
+    return;
+  }
+  if (!sig) {
+    desc.textContent = "Alcanzaste el rango máximo de la escalera: Maestro. Tu misión ahora es formar a quienes te superarán.";
+    barra.style.width = "100%";
+    texto.textContent = "";
+    lista.innerHTML = "";
+    return;
+  }
+
+  const misiones = misionesDelSiguienteRango(rango);
+  const total = totalPuntos(sig);
+  const pts = puntosAprobados(misiones, ESTADO.progreso);
+  desc.innerHTML = `Misiones para ascender de <strong>${esc(nombreRango(rango))}</strong> a <strong>${esc(nombreRango(sig))}</strong>.`;
+  barra.style.width = (total ? Math.round((pts / total) * 100) : 0) + "%";
+  texto.textContent = `${pts} / ${total} puntos — las misiones "en revisión" suman cuando tu Guía las atestigua.`;
+
+  let html = "";
+  /* Primera misión destacada (B1-31): mientras el hermano no tenga
+     ninguna misión aprobada, la primera accionable se marca como su
+     única siguiente acción. */
+  const hayAprobada = misiones.some(m => {
+    const r = ESTADO.progreso[m.id];
+    return r && r.estado === "aprobada";
+  });
+  let destacadaUsada = false;
+  ["palabra", "ejemplo", "cuerpo"].forEach(pilar => {
+    const delPilar = misiones.filter(m => m.pilar === pilar);
+    if (!delPilar.length) return;
+    html += `<div class="pilar-titulo">${PILARES[pilar].nombre} — ${PILARES[pilar].frase}</div>`;
+    delPilar.forEach(m => {
+      const r = ESTADO.progreso[m.id];
+      const est = r ? r.estado : "pendiente";
+      const dest = !hayAprobada && !destacadaUsada && (est === "pendiente" || est === "rechazada");
+      if (dest) destacadaUsada = true;
+      html += tarjetaMision(m, dest);
+    });
+  });
+  lista.innerHTML = html;
+}
+
+function tarjetaMision(m, destacada) {
+  const reg = ESTADO.progreso[m.id];
+  const estado = reg ? reg.estado : "pendiente";
+  const tipoBadge = m.tipo === "casa"
+    ? `<span class="badge casa">En casa · Video</span>`
+    : `<span class="badge celula">En la célula · Testigo</span>`;
+
+  /* "pendiente" (sin envío) y "rechazada" (devuelta) pueden (re)enviarse:
+     en el backend, un envío rechazado no bloquea crear uno nuevo. */
+  const puedeEnviar = estado === "pendiente" || estado === "rechazada";
+  let acciones = "";
+  if (estado === "rechazada") {
+    acciones = `<p style="color:#FFB4AB;font-size:1rem;margin-top:8px">Devuelta por tu Guía${reg && reg.review_note ? ": " + esc(reg.review_note) : ""}. Podés volver a intentarla.</p>`;
+  }
+  if (puedeEnviar && m.tipo === "casa") {
+    acciones += `
+      <p style="color:var(--warn);font-size:1rem;margin-top:8px">Antes de grabar: este video lo verán tu Guía y el Fundador, y se borra 3 días después de la revisión. No grabes a terceros identificables ni a menores: un video así se devuelve sin calificar.</p>
+      <div class="acciones">
+        <input type="file" id="file-${m.id}" accept="video/*">
+        <button class="btn small" data-act="subirVideo" data-a="${m.id}">Subir video</button>
+      </div>`;
+  } else if (puedeEnviar && m.tipo === "celula") {
+    acciones += `
+      <div class="acciones">
+        <button class="btn small ghost" data-act="solicitarAtestacion" data-a="${m.id}">Ya la cumplí — pedir atestación</button>
+      </div>`;
+  } else if (estado === "en_revision") {
+    acciones = `<p style="color:var(--warn);font-size:1rem;margin-top:8px">En revisión: tu Guía está verificando esta misión.</p>`;
+  } else if (estado === "aprobada") {
+    acciones = `<p style="color:#8FD79B;font-size:1rem;margin-top:8px">✔ Misión aprobada y atestiguada.</p>`;
+  }
+
+  const regla = m.videoDiscurso
+    ? `<p class="regla">Regla del video: ${REGLA_VIDEO_DISCURSO}</p>` : "";
+  const serie = m.serie
+    ? `<p class="regla">Misión en serie: un video de control por mes.</p>` : "";
+
+  return `
+  <div class="mision${destacada ? " proxima" : ""}">
+    ${destacada ? `<p class="siguiente-etiqueta">Tu siguiente acción</p>` : ""}
+    <div class="m-top">
+      <h3>${esc(m.titulo)}</h3>
+      <span class="pts">${m.puntos} pts</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+      ${tipoBadge} ${badgeEstado(estado)}
+    </div>
+    <p>${esc(m.descripcion)}</p>
+    ${regla}${serie}
+    ${acciones}
+  </div>`;
+}
+
+/* ======================= ACCIONES SOBRE MISIONES =======================
+   En el backend NO hay tabla de progreso: enviar una misión es INSERTAR una
+   fila en `submissions` con status 'pendiente' (la RLS exige ese status al
+   crear). El Guía la pasa a 'aprobada' o 'rechazada' completando
+   reviewed_by / reviewed_at. Reenviar tras una devolución = un INSERT
+   nuevo (el índice único "vivo" de la base lo permite). */
+async function crearEnvio(misionId, cambios) {
+  if (ESTADO.demo) {
+    ESTADO.progreso[misionId] = Object.assign(
+      {}, ESTADO.progreso[misionId] || { estado: "pendiente", storage_path: null, review_note: null },
+      cambios
+    );
+    return true;
+  }
+  const sb = getSupabase();
+  const fila = {
+    user_id: ESTADO.usuarioId,
+    mission_key: misionId,
+    storage_path: cambios.storage_path || null,
+    note: cambios.note || null,
+    file_hash: cambios.file_hash || null,
+    status: "pendiente",
+  };
+  const { data, error } = await sb.from(TABLA_SUBMISSIONS)
+    .insert(fila).select().single();
+  if (error) { mostrarAviso("Error al enviar la misión: " + error.message, "error"); return false; }
+  ESTADO.progreso[misionId] = {
+    estado: "en_revision",
+    storage_path: data.storage_path || null,
+    review_note: null,
+    sub_id: data.id,
+  };
+  return true;
+}
+
+async function subirVideo(misionId) {
+  const input = document.getElementById("file-" + misionId);
+  if (!input || !input.files || !input.files[0]) {
+    mostrarAviso("Primero elegí el archivo de video de la misión.", "error");
+    return;
+  }
+  const file = input.files[0];
+
+  if (ESTADO.demo) {
+    await crearEnvio(misionId, { estado: "en_revision", storage_path: "demo/" + file.name });
+    mostrarAviso("Modo demostración: el video quedó marcado «en revisión» (no se subió a ningún servidor).", "ok");
+    renderCamino();
+    return;
+  }
+
+  const sb = getSupabase();
+  /* Hash SHA-256 exacto del archivo (A9): queda guardado en el envío y
+     detecta gratis el fraude más burdo — el mismo video presentado por
+     dos cuentas distintas. Si el hash falla, la subida sigue sin él. */
+  let fileHash = null;
+  try {
+    const buf = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+    fileHash = Array.from(new Uint8Array(buf))
+      .map(b => b.toString(16).padStart(2, "0")).join("");
+  } catch (e) { fileHash = null; }
+  /* Ruta obligatoria del bucket "videos": {user_id}/{mission_key}/{archivo}
+     (storage.sql). Las políticas de Storage solo dejan a cada hermano
+     escribir dentro de su propia carpeta. */
+  const ruta = `${ESTADO.usuarioId}/${misionId}/${Date.now()}-${file.name}`;
+  const { error: errUp } = await sb.storage.from(BUCKET_VIDEOS)
+    .upload(ruta, file, { upsert: true });
+  if (errUp) { mostrarAviso("No se pudo subir el video: " + errUp.message, "error"); return; }
+
+  if (await crearEnvio(misionId, { storage_path: ruta, file_hash: fileHash })) {
+    mostrarAviso("Video subido. Tu misión quedó «en revisión»: tu Guía la va a verificar.", "ok");
+    renderCamino();
+  }
+}
+
+async function solicitarAtestacion(misionId) {
+  const cambios = ESTADO.demo
+    ? { estado: "en_revision", storage_path: null }
+    : { note: "Solicito la atestación de mi Guía: ya cumplí esta misión en la célula." };
+  if (await crearEnvio(misionId, cambios)) {
+    mostrarAviso("Listo: tu Guía ya puede atestiguar esta misión desde su panel.", "ok");
+    renderCamino();
+  }
+}
+
+/* ==================== CADA UNO TRAE UNO (referidos) ====================
+   Enlace personal ?ref=LVZ-XXXX: quien se registra desde él queda
+   marcado como un hermano que yo traje. El contador y la lista salen de
+   la base de datos (función my_referrals): viven en el servidor, así que
+   ningún cambio de la web los puede borrar. */
+function enlaceReferido() {
+  const p = ESTADO.perfil;
+  return "https://lavoz-hermandad.github.io/ingresar.html?ref=LVZ-" +
+    String(p.lvz_number).padStart(4, "0");
+}
+
+function renderReferidos() {
+  const zona = document.getElementById("zona-referidos");
+  const refs = ESTADO.referidos || [];
+  /* Un hermano traído CUENTA cuando confirmó su correo y su primera
+     misión fue aprobada (lo calcula el servidor en my_referrals:
+     qualifies). Antes de eso figura en la lista, pero no suma. */
+  const queCuentan = refs.filter(r => r.qualifies).length;
+  const filas = refs.map(r => `
+    <p style="padding:8px 0;border-bottom:1px solid var(--line)">
+      <strong style="color:var(--white)">${esc(r.full_name)}</strong>
+      <span style="color:var(--gray)">· ${esc(nombreRango(r.rank))}${r.cell_id ? " · ya está en una célula" : " · todavía sin célula"}</span>${r.qualifies ? "" : `<span style="color:#E8B04B"> · todavía no cuenta: sin confirmar o sin misión aprobada</span>`}
+    </p>`).join("");
+  zona.innerHTML = `
+  <section class="seccion">
+    <h2>Cada uno trae uno</h2>
+    <p class="desc">Tu enlace de invitación es personal y es tuyo en cualquier rango: quien crea su cuenta desde él queda registrado como un hermano que trajiste vos.</p>
+    <div class="card">
+      <p style="color:var(--gray);font-size:.9rem">TU ENLACE DE INVITACIÓN</p>
+      <p style="word-break:break-all;color:var(--white);margin:6px 0 12px">${enlaceReferido()}</p>
+      <button class="btn small" data-act="copiarEnlaceReferido">Copiar mi enlace</button>
+      <p style="margin-top:16px">Hermanos traídos: <strong style="color:var(--white);font-size:1.35rem">${queCuentan}</strong></p>
+      <p style="color:var(--gray);font-size:.88rem">Un hermano cuenta cuando confirmó su correo y su primera misión fue aprobada: traer es el primer paso; que se forje, el que vale.</p>
+      ${filas}
+    </div>
+  </section>`;
+}
+
+function copiarEnlaceReferido() {
+  const link = enlaceReferido();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(
+      () => mostrarAviso("Enlace copiado: compartilo con tu próximo hermano.", "ok"),
+      () => mostrarAviso("Copialo a mano: " + link, "demo"));
+  } else {
+    mostrarAviso("Tu enlace: " + link, "demo");
+  }
+}
+
+/* ==================== ABRÍ TU CÉLULA (solicitud) ====================
+   El camino del fundador de célula adentro del sistema: el hermano
+   presenta su solicitud (dónde, con quiénes, por qué), el Fundador la lee,
+   entrevista y designa. La designación la ejecuta el servidor
+   (approve_cell_application): crea la célula, sube al hermano a Guía y el
+   kit de fundación se desbloquea solo, por rango. */
+function renderSolicitud() {
+  const zona = document.getElementById("zona-solicitud");
+  const p = ESTADO.perfil;
+  if (p.rank === RANGO_FUNDADOR) { zona.innerHTML = ""; return; }
+  if (p.rank === "guia" || p.rank === "maestro") {
+    zona.innerHTML = `
+    <section class="seccion">
+      <h2>Abrí tu célula</h2>
+      <div class="card"><p style="color:#CFCFCF">Ya estás en el camino de guiar. Cuando tu célula esté lista para su designación formal, el Fundador la activa con tu Acta de Designación y el kit completo.</p></div>
+    </section>`;
+    return;
+  }
+  const s = ESTADO.miSolicitud;
+  const campo = "background:#141414;border:1px solid var(--line);color:var(--white);border-radius:8px;padding:10px 12px;width:100%;font:inherit";
+  let cuerpo = "";
+  if (s && s.status === "pendiente") {
+    cuerpo = `<div class="card">
+      <h3>Tu solicitud está presentada</h3>
+      <p style="color:#CFCFCF">Ciudad: <strong style="color:var(--white)">${esc(s.city)}, ${esc(s.country)}</strong> · Hermanos en vista: ${s.group_ready}</p>
+      <p style="color:#CFCFCF">El Fundador la está leyendo. El paso siguiente es la entrevista por videollamada: tené tu WhatsApp a mano, te contacta por ahí.</p>
+    </div>`;
+  } else if (s && s.status === "aprobada") {
+    cuerpo = `<div class="card">
+      <h3>¡Designado!</h3>
+      <p style="color:#CFCFCF">Tu célula quedó creada y tu rango de Guía, activo. El kit de fundación ya está en tu sección de Documentos.</p>
+    </div>`;
+  } else {
+    const avisoRechazo = (s && s.status === "rechazada")
+      ? `<p style="color:#E8B04B;margin-bottom:12px">Tu solicitud anterior no prosperó esta vez. El camino sigue abierto: fortalecé tu formación, reuní a tus integrantes y volvé a presentarla.</p>` : "";
+    cuerpo = `${avisoRechazo}<div class="card">
+      <div style="display:grid;gap:10px">
+        <input type="text" id="sol-pais" placeholder="País *" style="${campo}">
+        <input type="text" id="sol-ciudad" placeholder="Ciudad o localidad *" style="${campo}">
+        <input type="text" id="sol-lugar" placeholder="Lugar donde se reunirían (plaza, parque, salón…)" style="${campo}">
+        <input type="text" id="sol-dia" placeholder="Día y hora pensados (ej.: sábados 10:00)" style="${campo}">
+        <input type="number" id="sol-grupo" min="0" max="30" placeholder="¿Cuántos integrantes tenés reunidos o en vista?" style="${campo}">
+        <textarea id="sol-porque" rows="4" placeholder="¿Por qué querés abrir una célula en tu ciudad? Contalo con tus palabras. *" style="${campo}"></textarea>
+        <button class="btn" data-act="enviarSolicitud">Presentar mi solicitud</button>
+      </div>
+    </div>`;
+  }
+  zona.innerHTML = `
+  <section class="seccion">
+    <h2>Abrí tu célula</h2>
+    <p class="desc">LA VOZ crece ciudad por ciudad. Si en la tuya todavía no hay célula, podés fundarla: presentá tu solicitud, el Fundador te entrevista y, si te designa, se te desbloquea el kit completo de fundación.</p>
+    ${cuerpo}
+  </section>`;
+}
+
+async function enviarSolicitud() {
+  const val = id => (document.getElementById(id) || {}).value || "";
+  const pais = val("sol-pais").trim();
+  const ciudad = val("sol-ciudad").trim();
+  const porque = val("sol-porque").trim();
+  if (!pais || !ciudad || !porque) {
+    mostrarAviso("Completá país, ciudad y tu por qué: son el corazón de la solicitud.", "error");
+    return;
+  }
+  if (ESTADO.demo) {
+    mostrarAviso("Modo demostración: acá se presentaría tu solicitud.", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const { data, error } = await sb.from(TABLA_CELL_APPLICATIONS).insert({
+    user_id: ESTADO.usuarioId,
+    country: pais,
+    city: ciudad,
+    meeting_place: val("sol-lugar").trim() || null,
+    meeting_day: val("sol-dia").trim() || null,
+    group_ready: parseInt(val("sol-grupo"), 10) || 0,
+    why: porque,
+  }).select("*").single();
+  if (error) { mostrarAviso("No se pudo presentar: " + error.message, "error"); return; }
+  ESTADO.miSolicitud = data;
+  renderSolicitud();
+  mostrarAviso("Solicitud presentada. El Fundador la va a leer: el próximo paso es la entrevista.", "ok");
+}
+
+/* ==================== DOCUMENTOS DE LA HERMANDAD ====================
+   Los documentos publicados cuyo rango mínimo el hermano alcanza (la RLS
+   ya filtró en el servidor: acá solo se pinta). La descarga usa una URL
+   firmada del bucket privado «documentos». El Fundador, además, los
+   gestiona desde Administración. */
+function renderDocumentos() {
+  const zona = document.getElementById("zona-documentos");
+  const docs = ESTADO.documentos || [];
+  const filas = docs.map((d, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;
+                padding:8px 0;border-bottom:1px solid var(--line)">
+      <span>${esc(d.title)} <span style="color:var(--gray)">· desde ${esc(nombreRango(d.min_rank))}</span>${d.active ? "" : ' <span style="color:var(--gray)">(oculto)</span>'}</span>
+      <button class="btn small ghost" data-act="descargarDocumento" data-a="${i}">Descargar</button>
+    </div>`).join("");
+  zona.innerHTML = `
+  <section class="seccion">
+    <h2>Documentos</h2>
+    <p class="desc">Los documentos oficiales de la hermandad para tu rango.</p>
+    <div class="card">
+      ${docs.length ? filas : `<p style="color:#CFCFCF">Todavía no hay documentos publicados para tu rango.</p>
+      <p style="color:var(--gray);margin-top:8px">Tu siguiente paso está en <a href="#seccion-camino">«Mi camino»</a>: al avanzar de rango se te abren los documentos de ese nivel.</p>`}
+    </div>
+  </section>`;
+}
+
+async function descargarDocumento(i) {
+  const d = (ESTADO.documentos || [])[i];
+  if (!d) return;
+  if (ESTADO.demo) {
+    mostrarAviso("Modo demostración: acá se descargaría el documento.", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const { data, error } = await sb.storage.from(BUCKET_DOCUMENTOS)
+    .createSignedUrl(d.storage_path, 600, { download: true });
+  if (error || !data) { mostrarAviso("No se pudo generar la descarga.", "error"); return; }
+  const a = document.createElement("a");
+  a.href = data.signedUrl;
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+/* ==================== SECCIÓN DEL GUÍA: «MI CÉLULA» ====================
+   Se construye SOLO si el rango es Guía o Maestro. */
+function renderGuia() {
+  const zona = document.getElementById("zona-guia");
+  const p = ESTADO.perfil;
+  if (!(p.rank === "guia" || p.rank === "maestro")) { zona.innerHTML = ""; return; }
+
+  /* Revisiones pendientes de los hermanos de mi célula */
+  const revisiones = [];
+  ESTADO.miembrosCelula.forEach(hermano => {
+    const prog = ESTADO.progresoCelula[miembro.id] || {};
+    Object.keys(prog).forEach(mid => {
+      if (prog[mid].estado === "en_revision" && MISION_POR_ID[mid]) {
+        revisiones.push({ hermano, mision: MISION_POR_ID[mid], registro: prog[mid] });
+      }
+    });
+  });
+
+  const filasMiembros = ESTADO.miembrosCelula.map(m => {
+    const sig = siguienteRango(m.rank);
+    const misiones = sig ? misionesDelSiguienteRango(m.rank) : [];
+    const prog = ESTADO.progresoCelula[m.id] || {};
+    const aprobadas = misiones.filter(x => prog[x.id] && prog[x.id].estado === "aprobada").length;
+    return `<tr>
+      <td>${esc(m.full_name)}</td>
+      <td>${esc(m.lvz_code || "—")}</td>
+      <td>${esc(nombreRango(m.rank))}</td>
+      <td>${sig ? `${aprobadas} / ${misiones.length} misiones hacia ${esc(nombreRango(sig))}` : "Rango máximo"}</td>
+      <td style="white-space:nowrap">${["aspirante", "iniciado", "orador"].includes(m.rank)
+        ? `<select id="grango-${esc(m.id)}">${["aspirante", "iniciado", "orador"].map(r => `<option value="${r}" ${r === m.rank ? "selected" : ""}>${nombreRango(r)}</option>`).join("")}</select>
+           <button class="btn small" data-act="guiaAsignarRango" data-a="${esc(m.id)}">Aplicar</button>`
+        : `<span style="color:var(--gray)">Lo mueve el Fundador</span>`}</td>
+    </tr>`;
+  }).join("");
+
+  const filasRevisiones = revisiones.map((r, i) => `
+    <tr>
+      <td>${esc(r.miembro.full_name)}</td>
+      <td>${esc(r.mision.titulo)} <span class="pts" style="color:var(--gray)">(${PILARES[r.mision.pilar].nombre})</span></td>
+      <td>${r.registro.storage_path
+        ? `<button class="btn small ghost" data-act="verVideoRevision" data-a="${esc(r.miembro.id)}" data-b="${esc(r.mision.id)}">Ver video</button>
+           <button class="btn small ghost" data-act="descargarVideoRevision" data-a="${esc(r.miembro.id)}" data-b="${esc(r.mision.id)}">Descargar</button>`
+        : `<span style="color:var(--gray)">Misión de célula</span>`}</td>
+      <td style="white-space:nowrap">
+        <button class="btn small" data-act="resolverRevision" data-a="${esc(r.miembro.id)}" data-b="${esc(r.mision.id)}" data-c="true">Atestiguar</button>
+        <button class="btn small ghost" data-act="resolverRevision" data-a="${esc(r.miembro.id)}" data-b="${esc(r.mision.id)}" data-c="false">Devolver</button>
+      </td>
+    </tr>`).join("");
+
+  /* Mi célula propia: crearla si no tengo, y sumar a los que traje. */
+  const cel = ESTADO.celulaGuiada;
+  const campoCel = "background:#141414;border:1px solid var(--line);color:var(--white);border-radius:8px;padding:10px 12px;width:100%;font:inherit";
+  let bloqueCelula = "";
+  if (!cel) {
+    bloqueCelula = `
+    <div class="card" style="margin-bottom:18px">
+      <h3>Creá tu célula</h3>
+      <p style="color:#CFCFCF;margin-bottom:12px">Como Guía podés fundar tu propia célula y sumar a los hermanos que trajiste vos.</p>
+      <div style="display:grid;gap:10px">
+        <input type="text" id="cel-ciudad" placeholder="Ciudad *" style="${campoCel}">
+        <input type="text" id="cel-pais" placeholder="País *" style="${campoCel}">
+        <input type="text" id="cel-lugar" placeholder="Lugar de reunión (plaza, parque, salón…)" style="${campoCel}">
+        <input type="text" id="cel-dia" placeholder="Día y hora (ej.: sábados 10:00)" style="${campoCel}">
+        <button class="btn" data-act="crearMiCelula">Crear mi célula</button>
+      </div>
+    </div>`;
+  } else {
+    const sinCelula = (ESTADO.referidos || []).filter(r => !r.cell_id);
+    bloqueCelula = `
+    <div class="card" style="margin-bottom:18px">
+      <h3>${esc(cel.name)}</h3>
+      <p style="color:var(--gray)">${esc(cel.city || "")}${cel.country ? ", " + esc(cel.country) : ""}${cel.meeting_day ? " · " + esc(cel.meeting_day) : ""}</p>
+      ${sinCelula.length
+        ? `<p style="color:#CFCFCF;margin:12px 0 4px">Hermanos que trajiste y todavía no están en tu célula:</p>` +
+          sinCelula.map(r => `
+          <p style="padding:8px 0;border-bottom:1px solid var(--line)">
+            <strong style="color:var(--white)">${esc(r.full_name)}</strong>
+            <span style="color:var(--gray)">· ${esc(nombreRango(r.rank))}</span>
+            <button class="btn small" style="float:right" data-act="sumarAMiCelula" data-a="${esc(r.id)}">Sumar a mi célula</button>
+          </p>`).join("")
+        : `<p style="color:var(--gray);margin-top:10px">Compartí tu enlace de invitación: los hermanos que se registren desde él vas a poder sumarlos acá.</p>`}
+    </div>`;
+  }
+
+  zona.innerHTML = `
+  <section class="seccion">
+    <h2>Mi célula — panel del Guía</h2>
+    <p class="desc">Tus hermanos, su avance y las misiones que esperan tu atestación.
+      Atestiguar es dar fe: solo aprobás lo que viste cumplido.</p>
+    ${bloqueCelula}
+
+    <div class="card" style="margin-bottom:18px">
+      <h3>Hermanos de mi célula</h3>
+      ${ESTADO.miembrosCelula.length
+        ? `<table class="tabla"><thead><tr><th>Nombre</th><th>N.º</th><th>Rango</th><th>Avance</th><th>Cambiar rango</th></tr></thead>
+           <tbody>${filasMiembros}</tbody></table>`
+        : `<p style="color:var(--gray)">Todavía no hay hermanos registrados en tu célula.</p>`}
+    </div>
+
+    <div class="card">
+      <h3>Misiones en revisión</h3>
+      <p style="color:#E8B04B;font-size:.9rem;margin-bottom:12px">Rúbrica de revisión: si en el video aparecen terceros identificables o menores ajenos, devolvelo <strong>sin calificar</strong>. El video se borra solo 3 días después de tu revisión.</p>
+      ${revisiones.length
+        ? `<table class="tabla"><thead><tr><th>Hermano</th><th>Misión</th><th>Evidencia</th><th>Resolución</th></tr></thead>
+           <tbody>${filasRevisiones}</tbody></table>`
+        : `<p style="color:var(--gray)">No hay misiones esperando tu revisión. Cuando un hermano suba un video o pida atestación, aparece acá.</p>`}
+    </div>
+  </section>`;
+}
+
+/* Cambiar el rango de un hermano de MI célula, hasta Orador (servidor:
+   guide_set_rank — la banda y el ámbito los controla el backend). */
+async function guiaAsignarRango(memberId) {
+  const sel = document.getElementById("grango-" + memberId);
+  if (!sel) return;
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  /* El servidor exige motivo (queda en la bitácora) y aplica un cooldown
+     de 7 días entre movimientos del mismo rango. */
+  const motivo = prompt("Motivo del cambio de rango (obligatorio: queda registrado en la bitácora):", "");
+  if (motivo === null) return; /* canceló */
+  if (!motivo.trim()) {
+    mostrarAviso("El cambio de rango exige un motivo escrito.", "error");
+    return;
+  }
+  const sb = getSupabase();
+  const { error } = await sb.rpc("guide_set_rank", {
+    p_member: memberId,
+    p_rank: sel.value,
+    p_note: motivo.trim(),
+  });
+  if (error) { mostrarAviso("No se pudo cambiar: " + error.message, "error"); return; }
+  mostrarAviso("Rango actualizado y registrado en la bitácora.", "ok");
+  await cargarReal();
+}
+
+/* Crear mi célula (servidor: create_my_cell — una sola, solo Guía/Maestro). */
+async function crearMiCelula() {
+  const val = id => (document.getElementById(id) || {}).value || "";
+  const ciudad = val("cel-ciudad").trim();
+  const pais = val("cel-pais").trim();
+  if (!ciudad || !pais) { mostrarAviso("Completá ciudad y país para crear tu célula.", "error"); return; }
+  if (ESTADO.demo) { mostrarAviso("Modo demostración: acá se crearía tu célula.", "demo"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.rpc("create_my_cell", {
+    p_name: "Célula " + ciudad,
+    p_city: ciudad,
+    p_country: pais,
+    p_place: val("cel-lugar").trim() || null,
+    p_day: val("cel-dia").trim() || null,
+  });
+  if (error) { mostrarAviso("No se pudo crear: " + error.message, "error"); return; }
+  mostrarAviso("¡Tu célula nació! Ahora sumá a los hermanos que trajiste.", "ok");
+  await cargarReal();
+}
+
+/* Sumar a mi célula a un hermano que yo traje (servidor: add_to_my_cell). */
+async function sumarAMiCelula(memberId) {
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.rpc("add_to_my_cell", { p_member: memberId });
+  if (error) { mostrarAviso("No se pudo sumar: " + error.message, "error"); return; }
+  mostrarAviso("Hermano sumado a tu célula.", "ok");
+  await cargarReal();
+}
+
+/* Registro de accesos a videos (A8): rostro y voz identifican personas,
+   así que cada URL firmada de video deja asentado quién la generó y para
+   qué (ver o descargar). El servidor (RPC log_video_access) solo lo
+   acepta del Fundador o del guía del autor del envío. Es un registro:
+   nunca bloquea la revisión si falla. */
+async function registrarAccesoVideo(subId, accion) {
+  if (!subId || ESTADO.demo) return;
+  try {
+    const sb = getSupabase();
+    await sb.rpc("log_video_access", { p_submission: subId, p_action: accion });
+  } catch (e) { /* registrar nunca frena al revisor */ }
+}
+
+/* Resuelve el id de un envío desde su ruta en el bucket, buscando en lo
+   que el panel ya cargó (revisiones del guía o envíos del Fundador). */
+function subIdPorPath(path) {
+  const t = (ESTADO.submissionsTodos || []).find(s => s.storage_path === path);
+  if (t) return t.id;
+  const porU = ESTADO.progresoCelula || {};
+  for (const uid of Object.keys(porU)) {
+    for (const mid of Object.keys(porU[uid])) {
+      if (porU[uid][mid].storage_path === path) return porU[uid][mid].sub_id || null;
+    }
+  }
+  return null;
+}
+
+async function verVideoRevision(usuarioId, misionId) {
+  const reg = (ESTADO.progresoCelula[usuarioId] || {})[misionId];
+  if (!reg || !reg.storage_path) return;
+  if (ESTADO.demo) {
+    mostrarAviso("Modo demostración: acá se abriría el video del hermano (enlace firmado del bucket privado).", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const { data, error } = await sb.storage.from(BUCKET_VIDEOS)
+    .createSignedUrl(reg.storage_path, 600);
+  if (error || !data) { mostrarAviso("No se pudo abrir el video.", "error"); return; }
+  await registrarAccesoVideo(reg.sub_id, "view");
+  window.open(data.signedUrl, "_blank");
+}
+
+/* Descarga del video (URL firmada con disposición de descarga). La usa el
+   Guía en su panel y el Fundador como administrador: el video se borra solo
+   3 días después de la revisión, así que quien quiera conservarlo lo baja
+   antes. */
+async function descargarVideoPorPath(path) {
+  if (ESTADO.demo) {
+    mostrarAviso("Modo demostración: acá se descargaría el video del hermano.", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const { data, error } = await sb.storage.from(BUCKET_VIDEOS)
+    .createSignedUrl(path, 600, { download: true });
+  if (error || !data) { mostrarAviso("No se pudo generar la descarga.", "error"); return; }
+  await registrarAccesoVideo(subIdPorPath(path), "download");
+  const a = document.createElement("a");
+  a.href = data.signedUrl;
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+async function descargarVideoRevision(usuarioId, misionId) {
+  const reg = (ESTADO.progresoCelula[usuarioId] || {})[misionId];
+  if (!reg || !reg.storage_path) return;
+  await descargarVideoPorPath(reg.storage_path);
+}
+
+async function verVideoPorPath(path) {
+  if (ESTADO.demo) {
+    mostrarAviso("Modo demostración: acá se abriría el video del hermano.", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const { data, error } = await sb.storage.from(BUCKET_VIDEOS)
+    .createSignedUrl(path, 600);
+  if (error || !data) { mostrarAviso("No se pudo abrir el video.", "error"); return; }
+  await registrarAccesoVideo(subIdPorPath(path), "view");
+  window.open(data.signedUrl, "_blank");
+}
+
+async function resolverRevision(usuarioId, misionId, aprueba) {
+  /* En el backend, revisar = UPDATE del envío (submissions): status pasa a
+     'aprobada' o 'rechazada' y quedan reviewed_by / reviewed_at. El trigger
+     de la base exige que reviewed_by sea quien llama (el guía de la célula
+     del autor, o el fundador). */
+  const nuevoEstado = aprueba ? "aprobada" : "rechazada";
+  /* La «nota»: la devolución escrita del revisor. Al guardarse con
+     reviewed_at arranca la cuenta de 3 días para el borrado del video. */
+  const nota = prompt(aprueba
+    ? "Nota para el hermano (opcional): tu devolución sobre esta misión."
+    : "Nota para el hermano (opcional): por qué se devuelve y qué mejorar.", "");
+  if (nota === null) return; /* canceló: no se resuelve nada */
+  if (ESTADO.demo) {
+    ESTADO.progresoCelula[usuarioId][misionId].estado = nuevoEstado;
+    renderGuia();
+    mostrarAviso(aprueba ? "Misión atestiguada (demo)." : "Misión devuelta al hermano (demo).", "ok");
+    return;
+  }
+  const reg = (ESTADO.progresoCelula[usuarioId] || {})[misionId];
+  if (!reg || !reg.sub_id) { mostrarAviso("No se encontró el envío a revisar.", "error"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.from(TABLA_SUBMISSIONS)
+    .update({
+      status: nuevoEstado,
+      reviewed_by: ESTADO.usuarioId,
+      reviewed_at: new Date().toISOString(),
+      review_note: nota || null,
+    })
+    .eq("id", reg.sub_id);
+  if (error) { mostrarAviso("Error al resolver: " + error.message, "error"); return; }
+  ESTADO.progresoCelula[usuarioId][misionId].estado = nuevoEstado;
+  renderGuia();
+  mostrarAviso(aprueba ? "Misión atestiguada." : "Misión devuelta: el hermano puede volver a intentarla.", "ok");
+}
+
+/* ================= SECCIÓN DEL FUNDADOR: «ADMINISTRACIÓN» =================
+   Se construye SOLO si profiles.rank === 'fundador' (en el backend el
+   Fundador es un valor del enum rank, no una marca aparte).
+   Los rangos se otorgan y se quitan únicamente desde acá, llamando a la RPC
+   `set_rank(target_user, new_rank, note)`, que vuelve a verificar en la base
+   que quien llama sea fundador, protege al único fundador (nadie puede
+   degradarlo y dejar a LA VOZ sin Fundador) y deja cada cambio asentado en
+   `rank_history`. La interfaz refleja esa misma protección: el selector del
+   único fundador queda deshabilitado. */
+function renderAdmin() {
+  const zona = document.getElementById("zona-admin");
+  const p = ESTADO.perfil;
+  if (p.rank !== RANGO_FUNDADOR) { zona.innerHTML = ""; return; }
+
+  const RANGOS_ASIGNABLES = [...RANGOS, RANGO_FUNDADOR];
+  const opciones = sel => RANGOS_ASIGNABLES.map(r =>
+    `<option value="${r}" ${r === sel ? "selected" : ""}>${nombreRango(r)}</option>`).join("");
+  const nFundadores = ESTADO.todosMiembros.filter(m => m.rank === RANGO_FUNDADOR).length;
+
+  /* Contador de referidos por hermano: cuántos hermanos trajo cada uno. */
+  const trajoPor = {};
+  ESTADO.todosMiembros.forEach(m => {
+    if (m.referred_by) trajoPor[m.referred_by] = (trajoPor[m.referred_by] || 0) + 1;
+  });
+
+  const filas = ESTADO.todosMiembros.map(m => {
+    const cel = m.cell_id && ESTADO.celulasPorId[m.cell_id]
+      ? ESTADO.celulasPorId[m.cell_id].name : "—";
+    /* Protección del backend, espejada: al único fundador no se lo degrada. */
+    const unicoFundador = m.rank === RANGO_FUNDADOR && nFundadores <= 1;
+    return `<tr>
+      <td>${esc(m.full_name)}${m.rank === RANGO_FUNDADOR ? ' <span class="badge rango">Fundador</span>' : ""}</td>
+      <td>${esc(m.email || "—")}${m.email_confirmed === false ? ' <span style="color:#E34234;font-size:.72rem;font-weight:bold;white-space:nowrap">SIN CONFIRMAR</span>' : ""}</td>
+      <td>${m.whatsapp ? `<a href="https://wa.me/${esc(m.whatsapp.replace(/\D/g, ""))}" target="_blank" rel="noopener">${esc(m.whatsapp)}</a>` : "—"}</td>
+      <td>${esc([m.ciudad, m.estado, m.pais].filter(Boolean).join(", ") || "—")}</td>
+      <td>${esc(m.documento || "—")}</td>
+      <td>${esc(m.lvz_code || "—")}</td>
+      <td>${esc(nombreRango(m.rank))}</td>
+      <td>${trajoPor[m.id] || 0}</td>
+      <td>${esc(cel)}</td>
+      <td><button class="btn small" data-act="adminVerFicha" data-a="${esc(m.id)}">Ver ficha</button></td>
+      <td style="white-space:nowrap">
+        <select id="rango-${esc(m.id)}" ${unicoFundador ? "disabled" : ""}>${opciones(m.rank)}</select>
+        <button class="btn small" ${unicoFundador ? "disabled" : ""}
+          data-act="adminAsignarRango" data-a="${esc(m.id)}">Aplicar</button>
+        ${unicoFundador ? '<div style="color:var(--gray);font-size:.78rem;margin-top:4px">Único Fundador: el sistema no permite degradarlo.</div>' : ""}
+      </td>
+    </tr>`;
+  }).join("");
+
+  /* Revisiones pendientes de TODA la hermandad: el Fundador ve y resuelve
+     cualquier envío (el backend lo permite expresamente). Se guarda la
+     lista en ESTADO para que los botones trabajen por índice, sin rutas
+     de archivo escritas en el HTML. */
+  const porId = {};
+  ESTADO.todosMiembros.forEach(m => { porId[m.id] = m; });
+  const pendientes = (ESTADO.submissionsTodos || [])
+    .filter(s => s.status === "pendiente" || s.status === "en_revision");
+  ESTADO.pendientesFundador = pendientes;
+  const filasPendientes = pendientes.map((s, i) => {
+    const m = porId[s.user_id];
+    const mis = MISION_POR_ID[s.mission_key];
+    return `<tr>
+      <td>${esc(m ? m.full_name : "—")}</td>
+      <td>${esc(mis ? mis.titulo : s.mission_key)}${mis ? ` <span class="pts" style="color:var(--gray)">(${PILARES[mis.pilar].nombre})</span>` : ""}</td>
+      <td>${s.storage_path
+        ? `<button class="btn small ghost" data-act="verVideoPendiente" data-a="${i}">Ver video</button>
+           <button class="btn small ghost" data-act="descargarVideoPendiente" data-a="${i}">Descargar</button>`
+        : `<span style="color:var(--gray)">Misión de célula</span>`}</td>
+      <td style="white-space:nowrap">
+        <button class="btn small" data-act="resolverRevisionFundador" data-a="${i}" data-b="true">Atestiguar</button>
+        <button class="btn small ghost" data-act="resolverRevisionFundador" data-a="${i}" data-b="false">Devolver</button>
+      </td>
+    </tr>`;
+  }).join("");
+
+  /* Documentos: la gestión real del Fundador (publicar, ocultar, quitar). */
+  const docsAdmin = ESTADO.documentos || [];
+  const filasDocs = docsAdmin.map((d, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;
+                padding:9px 0;border-bottom:1px solid var(--line)">
+      <span>${esc(d.title)} <span style="color:var(--gray);font-size:.85rem">· desde ${esc(nombreRango(d.min_rank))} · ${d.active ? "visible" : "oculto"}</span></span>
+      <span style="white-space:nowrap">
+        <button class="btn small ghost" data-act="descargarDocumento" data-a="${i}">Descargar</button>
+        <button class="btn small ghost" data-act="adminAlternarDocumento" data-a="${i}">${d.active ? "Ocultar" : "Mostrar"}</button>
+        <button class="btn small ghost" data-act="adminQuitarDocumento" data-a="${i}">Quitar</button>
+      </span>
+    </div>`).join("");
+
+  /* Solicitudes de célula pendientes: el filtro del Fundador. */
+  const solsPend = (ESTADO.solicitudes || []).filter(s => s.status === "pendiente");
+  ESTADO.solicitudesPendientes = solsPend;
+  const filasSols = solsPend.map((s, i) => {
+    const autor = porId[s.user_id];
+    return `<div style="padding:12px 0;border-bottom:1px solid var(--line)">
+      <p><strong style="color:var(--white)">${esc(autor ? autor.full_name : "—")}</strong>
+        <span style="color:var(--gray)">· ${esc(s.city)}, ${esc(s.country)} · ${s.group_ready} hermanos en vista</span></p>
+      ${(s.meeting_place || s.meeting_day) ? `<p style="color:var(--gray);font-size:.88rem">Lugar: ${esc(s.meeting_place || "—")} · Día: ${esc(s.meeting_day || "—")}</p>` : ""}
+      <p style="color:#CFCFCF;font-size:.94rem;margin:6px 0">«${esc(s.why)}»</p>
+      <div>
+        <button class="btn small" data-act="aprobarSolicitud" data-a="${i}">Aprobar y crear la célula</button>
+        <button class="btn small ghost" data-act="rechazarSolicitud" data-a="${i}">Rechazar</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  /* Células de la hermandad: el control total del Fundador. */
+  const celulasAdmin = Object.values(ESTADO.celulasPorId || {});
+  const campoFun = "background:#141414;border:1px solid var(--line);color:var(--white);border-radius:8px;padding:10px 12px;width:100%;font:inherit";
+  const guiaDeOtra = id => celulasAdmin.some(x => x.guide_id === id);
+  const filasCelulas = celulasAdmin.map(c => {
+    const guia = c.guide_id ? porId[c.guide_id] : null;
+    const hermanos = (ESTADO.todosMiembros || []).filter(m => m.cell_id === c.id);
+    const opcionesGuia = [`<option value="">— Sin guía —</option>`]
+      .concat((ESTADO.todosMiembros || [])
+        .filter(m => m.id === c.guide_id || !guiaDeOtra(m.id))
+        .map(m => `<option value="${m.id}" ${m.id === c.guide_id ? "selected" : ""}>${esc(m.full_name)} (${esc(nombreRango(m.rank))})</option>`))
+      .join("");
+    return `<div style="padding:12px 0;border-bottom:1px solid var(--line)">
+      <p><strong style="color:var(--white)">${esc(c.name)}</strong>
+        <span style="color:var(--gray)">· ${esc(c.city || "")}${c.country ? ", " + esc(c.country) : ""}${c.meeting_day ? " · " + esc(c.meeting_day) : ""}${c.meeting_place ? " · " + esc(c.meeting_place) : ""}</span></p>
+      <p style="color:var(--gray);font-size:.9rem;margin:4px 0">Guía: ${guia ? esc(guia.full_name) : "sin guía"} · ${miembros.length} miembros${miembros.length ? ": " + miembros.map(m => esc(m.full_name) + " (" + esc(nombreRango(m.rank)) + ")").join(", ") : ""}</p>
+      <div style="white-space:nowrap;margin-top:6px">
+        <select id="guia-de-${c.id}">${opcionesGuia}</select>
+        <button class="btn small" data-act="adminNombrarGuia" data-a="${esc(c.id)}">Nombrar guía</button>
+        <button class="btn small ghost" data-act="adminQuitarCelula" data-a="${esc(c.id)}">Quitar célula</button>
+      </div>
+    </div>`;
+  }).join("");
+  const opcionesGuiaNuevo = [`<option value="">— Crear sin guía por ahora —</option>`]
+    .concat((ESTADO.todosMiembros || [])
+      .filter(m => !guiaDeOtra(m.id))
+      .map(m => `<option value="${m.id}">${esc(m.full_name)} (${esc(nombreRango(m.rank))})</option>`))
+    .join("");
+
+  /* Pestaña inicial de Administración: la última usada, o la que tenga
+     trabajo pendiente (solicitudes primero, después revisiones). */
+  const tabIni = ESTADO.tabAdmin ||
+    (solsPend.length ? "solicitudes" : ((ESTADO.pendientesFundador || []).length ? "revisiones" : "resumen"));
+  const dispTab = n => tabIni === n ? "block" : "none";
+  const claseTab = n => "tabbtn" + (tabIni === n ? " activa" : "");
+  const badgeTab = n => n ? ` <span class="badge-n">${n}</span>` : "";
+
+  zona.innerHTML = `
+  <section class="seccion">
+    <h2>Administración — Fundador</h2>
+    <p class="desc"><strong style="color:var(--white)">Guía y Maestro los designás solo vos.</strong>
+      Dentro de su célula, cada Guía mueve los rangos de sus hermanos hasta Orador;
+      todo lo demás — y cualquier rango, cuando intervenís vos — es tu decisión y
+      queda registrado en el sistema, con su respaldo en papel.</p>
+
+    <div class="tabs-admin">
+      <button class="${claseTab("resumen")}" data-tab="resumen" data-act="mostrarTabAdmin" data-a="resumen">Resumen</button>
+      <button class="${claseTab("solicitudes")}" data-tab="solicitudes" data-act="mostrarTabAdmin" data-a="solicitudes">Solicitudes${badgeTab(solsPend.length)}</button>
+      <button class="${claseTab("revisiones")}" data-tab="revisiones" data-act="mostrarTabAdmin" data-a="revisiones">Revisiones${badgeTab((ESTADO.pendientesFundador || []).length)}</button>
+      <button class="${claseTab("miembros")}" data-tab="miembros" data-act="mostrarTabAdmin" data-a="miembros">Hermanos</button>
+      <button class="${claseTab("celulas")}" data-tab="celulas" data-act="mostrarTabAdmin" data-a="celulas">Células</button>
+      <button class="${claseTab("documentos")}" data-tab="documentos" data-act="mostrarTabAdmin" data-a="documentos">Documentos</button>
+    </div>
+
+  <div id="tab-resumen" class="tabadmin" style="display:${dispTab("resumen")}">
+    <div class="card" style="margin-bottom:18px">
+      <h3>Resumen</h3>
+      <p style="color:#CFCFCF">Hermanos: <strong style="color:var(--white)">${(ESTADO.todosMiembros || []).length}</strong> · Células: <strong style="color:var(--white)">${celulasAdmin.length}</strong> · Documentos: <strong style="color:var(--white)">${docsAdmin.length}</strong></p>
+      ${solsPend.length || (ESTADO.pendientesFundador || []).length ? `
+      <p style="color:#CFCFCF;margin-top:12px">Necesita tu atención:</p>
+      ${solsPend.length ? `<p style="padding:6px 0;color:#CFCFCF">· ${solsPend.length} solicitud(es) de célula esperando tu filtro <button class="btn small" data-act="mostrarTabAdmin" data-a="solicitudes">Ver</button></p>` : ""}
+      ${(ESTADO.pendientesFundador || []).length ? `<p style="padding:6px 0;color:#CFCFCF">· ${(ESTADO.pendientesFundador || []).length} envío(s) esperando tu revisión <button class="btn small" data-act="mostrarTabAdmin" data-a="revisiones">Ver</button></p>` : ""}`
+      : `<p style="color:var(--gray);margin-top:10px">Todo al día: nada pendiente de tu atención.</p>`}
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <h3>Visitas a la web</h3>
+      ${(() => {
+        const v = ESTADO.visitas || { total: 0, filas: [] };
+        const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+        const hace7 = Date.now() - 7 * 24 * 3600 * 1000;
+        const deHoy = v.filas.filter(f => new Date(f.created_at) >= hoy).length;
+        const de7 = v.filas.filter(f => new Date(f.created_at).getTime() >= hace7).length;
+        const porDia = {};
+        v.filas.forEach(f => {
+          const d = new Date(f.created_at);
+          const clave = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+          porDia[clave] = (porDia[clave] || 0) + 1;
+        });
+        const dias = Object.keys(porDia).sort().reverse().slice(0, 7)
+          .map(d => `<p style="padding:6px 0;border-bottom:1px solid var(--line);color:var(--gray)">${d} — <strong style="color:var(--white)">${porDia[d]}</strong> visitas</p>`).join("");
+        return `<p style="color:#CFCFCF">Total: <strong style="color:var(--white);font-size:1.25rem">${v.total}</strong>
+          · Hoy: <strong style="color:var(--white)">${deHoy}</strong>
+          · Últimos 7 días: <strong style="color:var(--white)">${de7}</strong></p>
+          ${dias}
+          <p style="color:var(--gray);font-size:.85rem;margin-top:8px">Contador propio de LA VOZ, en tu base de datos. Cuenta desde hoy: las visitas anteriores no quedaron registradas en ningún contador (GitHub solo guarda un resumen de 14 días).</p>`;
+      })()}
+    </div>
+  </div>
+
+  <div id="tab-miembros" class="tabadmin" style="display:${dispTab("miembros")}">
+    <div class="card" style="margin-bottom:18px">
+      <h3>Todos los hermanos</h3>
+      <table class="tabla">
+        <thead><tr><th>Nombre</th><th>Correo</th><th>WhatsApp</th><th>Ubicación</th><th>Documento</th><th>N.º</th><th>Rango actual</th><th>Trajo</th><th>Célula</th><th>Ficha</th><th>Asignar rango</th></tr></thead>
+        <tbody>${filas}</tbody>
+      </table>
+      <div id="ficha-miembro"></div>
+    </div>
+  </div>
+
+  <div id="tab-celulas" class="tabadmin" style="display:${dispTab("celulas")}">
+    <div class="card" style="margin-bottom:18px">
+      <h3>Células de la hermandad</h3>
+      <p style="color:#CFCFCF;margin-bottom:12px">Todas las células creadas, con su guía y sus hermanos. Como Fundador, vos creás células y nombrás a sus guías: si el hermano aún no es Guía, el nombramiento lo asciende y queda registrado.</p>
+      ${celulasAdmin.length ? filasCelulas : `<p style="color:var(--gray)">Todavía no hay células creadas.</p>`}
+      <div style="display:grid;gap:10px;margin-top:16px">
+        <input type="text" id="fun-ciudad" placeholder="Ciudad de la nueva célula *" style="${campoFun}">
+        <input type="text" id="fun-pais" placeholder="País *" style="${campoFun}">
+        <input type="text" id="fun-nombre" placeholder="Nombre (opcional: queda «Célula + ciudad»)" style="${campoFun}">
+        <input type="text" id="fun-lugar" placeholder="Lugar de reunión" style="${campoFun}">
+        <input type="text" id="fun-dia" placeholder="Día y hora (ej.: sábados 10:00)" style="${campoFun}">
+        <select id="fun-guia" style="${campoFun}">${opcionesGuiaNuevo}</select>
+        <button class="btn" data-act="adminCrearCelula">Crear célula</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-solicitudes" class="tabadmin" style="display:${dispTab("solicitudes")}">
+    <div class="card" style="margin-bottom:18px">
+      <h3>Solicitudes para abrir células</h3>
+      <p style="color:#CFCFCF;margin-bottom:12px">Tu filtro como Fundador: al aprobar, la célula nace con su Guía designado y el kit de fundación desbloqueado.</p>
+      ${solsPend.length ? filasSols : `<p style="color:var(--gray)">No hay solicitudes pendientes.</p>`}
+    </div>
+  </div>
+
+  <div id="tab-revisiones" class="tabadmin" style="display:${dispTab("revisiones")}">
+    <div class="card" style="margin-bottom:18px">
+      <h3>Revisiones pendientes — toda la hermandad</h3>
+      <p style="color:#CFCFCF;margin-bottom:12px">Como Fundador ves y resolvés cualquier envío,
+        suba quien lo suba. Los videos ya revisados se borran solos a los 3 días
+        de la nota: si querés conservar alguno, descargalo antes de que venza.</p>
+      <p style="color:#E8B04B;font-size:.9rem;margin-bottom:12px">Rúbrica: si en el video aparecen terceros identificables o menores ajenos, se devuelve <strong>sin calificar</strong>.</p>
+      ${pendientes.length
+        ? `<table class="tabla"><thead><tr><th>Hermano</th><th>Misión</th><th>Evidencia</th><th>Resolución</th></tr></thead>
+           <tbody>${filasPendientes}</tbody></table>`
+        : `<p style="color:var(--gray)">No hay misiones esperando revisión.</p>`}
+    </div>
+  </div>
+
+  <div id="tab-documentos" class="tabadmin" style="display:${dispTab("documentos")}">
+    <div class="card">
+      <h3>Documentos y contenidos</h3>
+      <p style="color:#CFCFCF;margin-bottom:12px">Publicá los documentos oficiales: cada integrante
+        los ve y los descarga desde su panel solo si su rango alcanza el mínimo que elijas.
+        «Ocultar» lo retira de la vista sin borrarlo; «Quitar» lo elimina del todo.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px">
+        <input type="text" id="doc-titulo" placeholder="Título del documento"
+               style="flex:1 1 220px;background:#141414;border:1px solid var(--line);color:var(--white);border-radius:8px;padding:9px 12px">
+        <select id="doc-rango">${[...RANGOS, RANGO_FUNDADOR].map(r => `<option value="${r}">desde ${nombreRango(r)}</option>`).join("")}</select>
+        <input type="file" id="doc-archivo" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+        <button class="btn small" data-act="adminPublicarDocumento">Publicar</button>
+      </div>
+      ${docsAdmin.length ? filasDocs : `<p style="color:var(--gray)">Todavía no publicaste ningún documento.</p>`}
+    </div>
+  </div>
+  </section>`;
+}
+
+/* ============ Revisiones del Fundador (toda la hermandad) ============ */
+function pendienteFundador(i) { return (ESTADO.pendientesFundador || [])[i]; }
+
+async function verVideoPendiente(i) {
+  const s = pendienteFundador(i);
+  if (s && s.storage_path) await verVideoPorPath(s.storage_path);
+}
+
+async function descargarVideoPendiente(i) {
+  const s = pendienteFundador(i);
+  if (s && s.storage_path) await descargarVideoPorPath(s.storage_path);
+}
+
+async function resolverRevisionFundador(i, aprueba) {
+  const s = pendienteFundador(i);
+  if (!s) return;
+  const nuevoEstado = aprueba ? "aprobada" : "rechazada";
+  const nota = prompt(aprueba
+    ? "Nota para el hermano (opcional): tu devolución sobre esta misión."
+    : "Nota para el hermano (opcional): por qué se devuelve y qué mejorar.", "");
+  if (nota === null) return; /* canceló: no se resuelve nada */
+  if (ESTADO.demo) {
+    mostrarAviso("Modo demostración: acá el Fundador resolvería la revisión.", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const { error } = await sb.from(TABLA_SUBMISSIONS)
+    .update({
+      status: nuevoEstado,
+      reviewed_by: ESTADO.usuarioId,
+      reviewed_at: new Date().toISOString(),
+      review_note: nota || null,
+    })
+    .eq("id", s.id);
+  if (error) { mostrarAviso("Error al resolver: " + error.message, "error"); return; }
+  s.status = nuevoEstado;
+  s.review_note = nota || null;
+  renderAdmin();
+  mostrarAviso(aprueba
+    ? "Misión atestiguada. El video se conserva 3 días más y luego se borra solo."
+    : "Misión devuelta: el hermano puede volver a intentarla.", "ok");
+}
+
+/* Pestañas de Administración: una sola visible, con avisos de pendientes. */
+function mostrarTabAdmin(nombre) {
+  ESTADO.tabAdmin = nombre;
+  document.querySelectorAll("#zona-admin .tabadmin").forEach(d => {
+    d.style.display = d.id === "tab-" + nombre ? "block" : "none";
+  });
+  document.querySelectorAll("#zona-admin .tabbtn").forEach(b => {
+    b.classList.toggle("activa", b.getAttribute("data-tab") === nombre);
+  });
+}
+
+/* Quitar una célula (servidor: founder_delete_cell). Los integrantes
+   quedan sin célula; nadie pierde rango ni progreso. */
+async function adminQuitarCelula(cellId) {
+  const cel = (ESTADO.celulasPorId || {})[cellId];
+  const nombre = cel ? cel.name : "esta célula";
+  if (!confirm("¿Quitar " + nombre + "? Sus integrantes quedan sin célula (conservan rango y progreso) y el guía deja de guiarla.")) return;
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  const sb = getSupabase();
+  const { data, error } = await sb.rpc("founder_delete_cell", { p_cell: cellId });
+  if (error) { mostrarAviso("No se pudo quitar: " + error.message, "error"); return; }
+  mostrarAviso("Célula quitada: " + (data || 0) + " integrante(s) quedaron sin célula.", "ok");
+  await cargarReal();
+}
+
+/* ============ Células: crear y nombrar guías (Fundador) ============ */
+async function adminCrearCelula() {
+  const val = id => (document.getElementById(id) || {}).value || "";
+  const ciudad = val("fun-ciudad").trim();
+  const pais = val("fun-pais").trim();
+  if (!ciudad || !pais) { mostrarAviso("Completá ciudad y país de la nueva célula.", "error"); return; }
+  if (ESTADO.demo) { mostrarAviso("Modo demostración: acá se crearía la célula.", "demo"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.rpc("founder_create_cell", {
+    p_name: val("fun-nombre").trim() || null,
+    p_city: ciudad,
+    p_country: pais,
+    p_place: val("fun-lugar").trim() || null,
+    p_day: val("fun-dia").trim() || null,
+    p_guide_id: val("fun-guia") || null,
+  });
+  if (error) { mostrarAviso("No se pudo crear: " + error.message, "error"); return; }
+  mostrarAviso("Célula creada en " + ciudad + ".", "ok");
+  await cargarReal();
+}
+
+async function adminNombrarGuia(cellId) {
+  const sel = document.getElementById("guia-de-" + cellId);
+  const guiaId = sel ? (sel.value || null) : null;
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.rpc("founder_set_cell_guide", {
+    p_cell: cellId,
+    p_guide: guiaId,
+  });
+  if (error) { mostrarAviso("No se pudo nombrar: " + error.message, "error"); return; }
+  mostrarAviso(guiaId ? "Guía nombrado: si aún no era Guía, ya ascendió y quedó registrado." : "La célula quedó sin guía.", "ok");
+  await cargarReal();
+}
+
+/* ============ Solicitudes de célula: el filtro del Fundador ============ */
+async function refrescarSolicitudes() {
+  if (ESTADO.demo) return;
+  const sb = getSupabase();
+  const { data: sols } = await sb.from(TABLA_CELL_APPLICATIONS)
+    .select("*").order("created_at", { ascending: false });
+  ESTADO.solicitudes = sols || [];
+  const { data: todos } = await sb.from(TABLA_PROFILES).select(COLUMNAS_PERFIL).order("lvz_number");
+  ESTADO.todosMiembros = todos || [];
+}
+
+async function aprobarSolicitud(i) {
+  const s = (ESTADO.solicitudesPendientes || [])[i];
+  if (!s) return;
+  if (!confirm("¿Aprobar la solicitud de " + s.city + "? Se crea la célula, el hermano pasa a Guía y se le desbloquea el kit de fundación.")) return;
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.rpc("approve_cell_application", { p_id: s.id });
+  if (error) { mostrarAviso("No se pudo aprobar: " + error.message, "error"); return; }
+  await refrescarSolicitudes();
+  renderAdmin();
+  mostrarAviso("Célula creada en " + s.city + ": su Guía fundador ya tiene el kit desbloqueado.", "ok");
+}
+
+async function rechazarSolicitud(i) {
+  const s = (ESTADO.solicitudesPendientes || [])[i];
+  if (!s) return;
+  if (!confirm("¿Rechazar esta solicitud? El hermano puede volver a presentarla más adelante.")) return;
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.from(TABLA_CELL_APPLICATIONS)
+    .update({
+      status: "rechazada",
+      reviewed_by: ESTADO.usuarioId,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("id", s.id);
+  if (error) { mostrarAviso("No se pudo rechazar: " + error.message, "error"); return; }
+  await refrescarSolicitudes();
+  renderAdmin();
+  mostrarAviso("Solicitud rechazada.", "ok");
+}
+
+/* ============ Documentos: gestión del Fundador ============ */
+async function refrescarDocumentos() {
+  if (ESTADO.demo) return;
+  const sb = getSupabase();
+  const { data: docs } = await sb.from(TABLA_DOCUMENTS)
+    .select("*").order("created_at", { ascending: false });
+  ESTADO.documentos = docs || [];
+}
+
+async function adminPublicarDocumento() {
+  const titulo = (document.getElementById("doc-titulo") || {}).value || "";
+  const rango = (document.getElementById("doc-rango") || {}).value || "aspirante";
+  const input = document.getElementById("doc-archivo");
+  const file = input && input.files && input.files[0];
+  if (!titulo.trim()) { mostrarAviso("Poné un título para el documento.", "error"); return; }
+  if (!file) { mostrarAviso("Elegí el archivo a publicar.", "error"); return; }
+  if (ESTADO.demo) {
+    mostrarAviso("Modo demostración: acá se publicaría el documento.", "demo");
+    return;
+  }
+  const sb = getSupabase();
+  const id = crypto.randomUUID();
+  const path = id + "/" + file.name;
+  const { error: errUp } = await sb.storage.from(BUCKET_DOCUMENTOS)
+    .upload(path, file, { upsert: false });
+  if (errUp) { mostrarAviso("No se pudo subir el archivo: " + errUp.message, "error"); return; }
+  const { error } = await sb.from(TABLA_DOCUMENTS).insert({
+    id, title: titulo.trim(), min_rank: rango,
+    storage_path: path, created_by: ESTADO.usuarioId,
+  });
+  if (error) {
+    await sb.storage.from(BUCKET_DOCUMENTOS).remove([path]);
+    mostrarAviso("No se pudo registrar el documento: " + error.message, "error");
+    return;
+  }
+  await refrescarDocumentos();
+  renderAdmin();
+  renderDocumentos();
+  mostrarAviso("Documento publicado: los hermanos desde " + nombreRango(rango) + " ya lo ven en su panel.", "ok");
+}
+
+async function adminAlternarDocumento(i) {
+  const d = (ESTADO.documentos || [])[i];
+  if (!d) return;
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  const sb = getSupabase();
+  const { error } = await sb.from(TABLA_DOCUMENTS)
+    .update({ active: !d.active }).eq("id", d.id);
+  if (error) { mostrarAviso("No se pudo cambiar la visibilidad: " + error.message, "error"); return; }
+  await refrescarDocumentos();
+  renderAdmin();
+  renderDocumentos();
+}
+
+async function adminQuitarDocumento(i) {
+  const d = (ESTADO.documentos || [])[i];
+  if (!d) return;
+  if (!confirm("¿Quitar «" + d.title + "»? Se borra el archivo y deja de existir para todos.")) return;
+  if (ESTADO.demo) { mostrarAviso("Modo demostración.", "demo"); return; }
+  const sb = getSupabase();
+  await sb.storage.from(BUCKET_DOCUMENTOS).remove([d.storage_path]);
+  const { error } = await sb.from(TABLA_DOCUMENTS).delete().eq("id", d.id);
+  if (error) { mostrarAviso("No se pudo quitar: " + error.message, "error"); return; }
+  await refrescarDocumentos();
+  renderAdmin();
+  renderDocumentos();
+  mostrarAviso("Documento eliminado.", "ok");
+}
+
+/* Ficha completa de un hermano (solo Fundador): todo lo que el sistema
+   sabe de él en un solo apartado — correo y su confirmación, número,
+   rango, célula, registro, último ingreso, quién lo trajo, cuántos trajo
+   y su avance en misiones. */
+function adminVerFicha(id) {
+  const m = (ESTADO.todosMiembros || []).find(x => x.id === id);
+  const zona = document.getElementById("ficha-miembro");
+  if (!m || !zona) return;
+  const cel = m.cell_id && ESTADO.celulasPorId[m.cell_id]
+    ? ESTADO.celulasPorId[m.cell_id].name : "Sin célula";
+  const ref = m.referred_by
+    ? (ESTADO.todosMiembros || []).find(x => x.id === m.referred_by) : null;
+  const traidos = (ESTADO.todosMiembros || []).filter(x => x.referred_by === m.id).length;
+  const subs = (ESTADO.submissionsTodos || []).filter(s => s.user_id === m.id);
+  const aprob = subs.filter(s => s.status === "aprobada").length;
+  const pend = subs.filter(s => s.status === "pendiente" || s.status === "en_revision").length;
+  const fecha = iso => iso ? new Date(iso).toLocaleString("es-UY") : "—";
+  const conf = m.email_confirmed === false
+    ? ' <span style="color:#E34234;font-weight:bold">(sin confirmar: todavía no puede ingresar)</span>'
+    : (m.email_confirmed ? ' <span style="color:var(--gray)">(confirmado)</span>' : "");
+  zona.innerHTML = `<div class="card" style="margin-top:18px;border:1px solid #E34234">
+    <h3>Ficha de ${esc(m.full_name)}</h3>
+    <p style="color:#CFCFCF;line-height:1.9">
+      <strong style="color:var(--white)">Correo:</strong> ${esc(m.email || "—")}${conf}<br>
+      <strong style="color:var(--white)">WhatsApp:</strong> ${m.whatsapp ? `<a href="https://wa.me/${esc(m.whatsapp.replace(/\D/g, ""))}" target="_blank" rel="noopener">${esc(m.whatsapp)}</a>` : "—"} ·
+      <strong style="color:var(--white)">Documento:</strong> ${esc(m.documento || "—")}<br>
+      <strong style="color:var(--white)">Ubicación:</strong> ${esc([m.ciudad, m.estado, m.pais].filter(Boolean).join(", ") || "—")}<br>
+      <strong style="color:var(--white)">Número:</strong> ${esc(m.lvz_code || "—")} ·
+      <strong style="color:var(--white)">Rango:</strong> ${esc(nombreRango(m.rank))} ·
+      <strong style="color:var(--white)">Estado:</strong> ${m.status === "active" ? "Activo" : esc(m.status || "—")}<br>
+      <strong style="color:var(--white)">Célula:</strong> ${esc(cel)}<br>
+      <strong style="color:var(--white)">Se registró:</strong> ${fecha(m.created_at)} ·
+      <strong style="color:var(--white)">Último ingreso:</strong> ${fecha(m.last_sign_in_at)}<br>
+      <strong style="color:var(--white)">Lo trajo:</strong> ${ref ? esc(ref.full_name) : "—"} ·
+      <strong style="color:var(--white)">Hermanos traídos:</strong> ${traidos}<br>
+      <strong style="color:var(--white)">Misiones:</strong> ${aprob} aprobadas · ${pend} pendientes · ${subs.length} envíos en total
+    </p>
+    <button class="btn small" data-act="cerrarFicha">Cerrar ficha</button>
+  </div>`;
+  zona.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function adminAsignarRango(usuarioId) {
+  const sel = document.getElementById("rango-" + usuarioId);
+  if (!sel) return;
+  const nuevoRango = sel.value;
+  const hermano = ESTADO.todosMiembros.find(m => m.id === usuarioId);
+  if (!hermano || miembro.rank === nuevoRango) {
+    mostrarAviso("Ese hermano ya tiene el rango " + nombreRango(nuevoRango) + ".", "demo");
+    return;
+  }
+  if (ESTADO.demo) {
+    miembro.rank = nuevoRango;
+    renderAdmin();
+    renderIdentidad();
+    mostrarAviso(`Demo: ${miembro.full_name} ahora es ${nombreRango(nuevoRango)}. (En producción lo ejecuta y lo audita set_rank en el servidor.)`, "ok");
+    return;
+  }
+  /* El motivo es obligatorio: el servidor lo exige y queda en la
+     bitácora (rank_history) junto a cada cambio. */
+  const motivo = prompt("Motivo del cambio de rango (obligatorio: queda registrado en la bitácora):", "");
+  if (motivo === null) return; /* canceló */
+  if (!motivo.trim()) {
+    mostrarAviso("El cambio de rango exige un motivo escrito.", "error");
+    return;
+  }
+  const sb = getSupabase();
+  /* set_rank verifica en el servidor que el llamante sea el Fundador,
+     protege al único fundador y registra el cambio en rank_history. */
+  const { error } = await sb.rpc("set_rank", {
+    target_user: usuarioId,
+    new_rank: nuevoRango,
+    note: motivo.trim(),
+  });
+  if (error) { mostrarAviso("No se pudo asignar el rango: " + error.message, "error"); return; }
+  miembro.rank = nuevoRango;
+  renderAdmin();
+  if (usuarioId === ESTADO.usuarioId) renderIdentidad();
+  mostrarAviso(`${miembro.full_name} ahora es ${nombreRango(nuevoRango)}.`, "ok");
+}
+
+/* ============================ ARRANQUE ============================ */
+/* Hitos que se celebran una sola vez por dispositivo (B1-31): el primer
+   ingreso al panel y la primera misión aprobada — no solo los ascensos.
+   El ascenso conserva su mecanismo propio (lvz_rango_visto) y manda si
+   coincide en la misma entrada. */
+function detectarHitos() {
+  if (ESTADO.demo || !ESTADO.perfil || !ESTADO.usuarioId) return;
+  try {
+    const uid = ESTADO.usuarioId;
+    const aprobadas = Object.values(ESTADO.progreso || {})
+      .filter(x => x && x.estado === "aprobada").length;
+    const claveAprob = "lvz_aprobadas_vistas_" + uid;
+    const vistas = parseInt(localStorage.getItem(claveAprob) || "0", 10) || 0;
+    if (aprobadas > vistas) {
+      localStorage.setItem(claveAprob, String(aprobadas));
+      if (vistas === 0 && !ESTADO.celebracion) {
+        ESTADO.celebracion = { tipo: "primera-mision" };
+      }
+    }
+    const claveVisto = "lvz_panel_visto_" + uid;
+    if (!localStorage.getItem(claveVisto)) {
+      localStorage.setItem(claveVisto, "1");
+      if (!ESTADO.celebracion) ESTADO.celebracion = { tipo: "bienvenida" };
+    }
+  } catch (e) {}
+}
+
+/* Celebración al entrar: la notificación vive donde el hito se usa — el
+   propio panel. Mensajes breves, específicos, en pasado y con el paso
+   siguiente (B1-31/B1-33). */
+function renderCelebracion() {
+  const zona = document.getElementById("zona-celebracion");
+  const c = ESTADO.celebracion;
+  if (!c) { zona.innerHTML = ""; return; }
+  if (c.tipo === "bienvenida") {
+    zona.innerHTML = `
+  <section class="celebracion">
+    <p class="cel-kicker">BIENVENIDO A LA VOZ</p>
+    <h2 class="cel-titulo">¡Ya sos parte, ${esc(ESTADO.perfil.full_name)}!</h2>
+    <p style="color:#CFCFCF">Tu cuenta quedó creada y confirmada. Tu siguiente paso es uno solo: tu primera misión, marcada acá abajo en «Mi camino».</p>
+    <button class="btn" style="margin-top:16px" data-act="irAPrimeraMision">Ver mi primera misión</button>
+    <button class="btn ghost" style="margin-top:16px" data-act="cerrarCelebracion">Entendido</button>
+  </section>`;
+    return;
+  }
+  if (c.tipo === "primera-mision") {
+    zona.innerHTML = `
+  <section class="celebracion">
+    <p class="cel-kicker">PRIMERA MISIÓN CUMPLIDA</p>
+    <h2 class="cel-titulo">¡Primera misión aprobada!</h2>
+    <p style="color:#CFCFCF">Tu primera misión quedó aprobada y atestiguada. Qué sigue: sumá los puntos de las próximas en «Mi camino» hasta completar el rango.</p>
+    <button class="btn" style="margin-top:16px" data-act="cerrarCelebracion">¡A seguir forjando!</button>
+  </section>`;
+    return;
+  }
+  const docs = c.desbloqueados && c.desbloqueados.length
+    ? `<p style="color:#CFCFCF;margin-top:8px">Se te abrió un estante nuevo:</p>` +
+      c.desbloqueados.map(d => `<p style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--white)">· ${esc(d.title)}</p>`).join("")
+    : `<p style="color:#CFCFCF;margin-top:8px">Tus próximas misiones ya te esperan en «Mi camino».</p>`;
+  zona.innerHTML = `
+  <section class="celebracion">
+    <p class="cel-kicker">LA HERMANDAD LO REGISTRA</p>
+    <h2 class="cel-titulo">¡ASCENDISTE A ${esc(nombreRango(c.rango).toUpperCase())}!</h2>
+    <p style="color:#CFCFCF">Palabra clara, ejemplo firme, cuerpo fuerte: diste el paso y el rango te reconoce.</p>
+    ${docs}
+    <button class="btn" style="margin-top:16px" data-act="cerrarCelebracion">¡A seguir forjando!</button>
+  </section>`;
+}
+
+function cerrarCelebracion() {
+  ESTADO.celebracion = null;
+  renderCelebracion();
+}
+
+function renderTodo() {
+  detectarHitos();
+  renderCelebracion();
+  renderIdentidad();
+  renderCelula();
+  renderMisDatos();
+  renderCamino();
+  renderReferidos();
+  renderDocumentos();
+  renderSolicitud();
+  renderGuia();
+  renderAdmin();
+}
+
+async function cerrarSesion() {
+  if (!ESTADO.demo) {
+    const sb = getSupabase();
+    if (sb) await sb.auth.signOut();
+  }
+  try { sessionStorage.removeItem("lavoz_demo"); } catch (e) {}
+  window.location.href = "ingresar.html";
+}
+
+(async function init() {
+  if (ESTADO.demo) { cargarDemo(); renderTodo(); }
+  else { await cargarReal(); }
+})();
+</script>
+</body>
+</html>

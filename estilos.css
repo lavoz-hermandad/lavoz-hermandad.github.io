@@ -1,0 +1,285 @@
+/* ============================================================================
+   LA VOZ — Estilos compartidos (ingreso y panel)
+   Identidad: negro #0A0A0A · bermellón #E34234 · blanco hueso #F5F5F5
+   Rediseño Tribunal N.º 3 (2026-10-12):
+   - Escala tipográfica cerrada, base 16 px, ratio 1.25:
+     12.8 (.8rem, solo rótulos) · 16 (1rem, cuerpo) · 20 (1.25rem, subtítulos)
+     · 25 (1.5625rem, títulos de sección) · 31.25 (1.953rem, titulares grandes)
+   - Ritmo vertical base 24 px (16 × 1.5); espaciados en múltiplos de 8:
+     8 / 16 / 24 / 32 / 48 / 64 / 96.
+   - Bermellón reservado al CTA primario y a un acento por pantalla; el resto
+     es jerarquía neutra (#F5F5F5 / #AAAAAA / superficies #141414 y #181818).
+   - Blanco sobre bermellón = 4.12:1 → todo texto sobre bermellón va compuesto
+     como texto grande (≥ 24 px, o ≥ 18.66 px en negrita). Nada de bermellón
+     en texto chico sobre #141414 (4.47:1) ni #181818 (4.31:1).
+   - Movimiento solo funcional, solo transform/opacity, con guarda
+     prefers-reduced-motion.
+   ========================================================================== */
+:root{
+  --black:#0A0A0A; --red:#E34234; --red-dark:#8F1D14;
+  --white:#F5F5F5; --gray:#AAAAAA; --dark:#141414; --card:#181818;
+  --line:#262626; --ok:#3FA34D; --warn:#E8A33D;
+  --err-txt:#FFB4AB;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-size:16px;
+  font-family:'Segoe UI',Arial,Helvetica,sans-serif;line-height:1.5}
+a{color:var(--red)}
+img{max-width:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.medida{max-width:70ch}
+
+/* ------------------------------ Encabezado ------------------------------ */
+header.site{position:sticky;top:0;z-index:50;background:rgba(10,10,10,.94);
+  border-bottom:1px solid #222;backdrop-filter:blur(4px)}
+header.site .bar{display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:16px 24px;max-width:1280px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;
+  letter-spacing:.14em;font-size:1.25rem;color:var(--white);text-decoration:none}
+.brand img{width:38px;height:38px}
+nav.main a{color:var(--gray);text-decoration:none;margin-left:24px;
+  font-size:1rem;letter-spacing:.04em}
+.head-actions{display:flex;align-items:center;gap:16px}
+.lang-toggle{display:flex;border:1px solid #333;border-radius:999px;overflow:hidden}
+.lang-toggle button{background:transparent;border:0;color:var(--gray);
+  padding:8px 16px;font-size:.8rem;letter-spacing:.08em;cursor:pointer}
+.lang-toggle button.activo{background:var(--red-dark);color:#fff;font-weight:700}
+
+/* ------------------------------- Botones -------------------------------- */
+/* Token único de botón para las tres páginas. Texto grande compuesto:
+   20 px en negrita (≥ 18.66 px bold) para que el blanco sobre bermellón
+   (4.12:1) cumpla AA como texto grande. */
+.btn{display:inline-block;background:var(--red);color:#fff;text-decoration:none;
+  border:0;border-radius:8px;padding:12px 24px;font-size:1.25rem;font-weight:700;
+  letter-spacing:.02em;cursor:pointer;transition:background .2s ease}
+.btn.ghost{background:transparent;border:1px solid var(--red);color:var(--red)}
+.btn.small{padding:8px 16px;font-size:1.1875rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:active{transform:scale(.98)}
+.btn.cargando::after{content:"";display:inline-block;width:16px;height:16px;
+  margin-left:10px;vertical-align:-2px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+  animation:giro .8s linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
+.btn-ingresar{padding:8px 16px;font-size:1.1875rem}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{background:#c93327}
+  .btn.ghost:hover{background:rgba(227,66,52,.12);color:var(--red)}
+  nav.main a:hover{color:var(--red)}
+  .link-button:hover{color:#FF7A6E}
+  .volver:hover{color:var(--red)}
+  .ver-pass:hover{opacity:1;color:#E8B4A0}
+  .enlace-texto:hover{color:var(--red)}
+}
+
+/* -------------------------------- Hero ---------------------------------- */
+/* (La home trae su propio CSS en línea; estas reglas quedan para cualquier
+   página interna que la reutilice, con la misma escala.) */
+.hero{min-height:calc(100svh - 120px);display:flex;align-items:center;
+  justify-content:center;text-align:center;padding:64px 24px;
+  background:radial-gradient(ellipse at 50% 35%,#1c0f0d 0%,var(--black) 65%)}
+.hero img.logo{width:120px;height:120px;margin-bottom:16px}
+.hero h1{font-size:3.05rem;letter-spacing:.14em;font-weight:800}
+.hero .motto{color:var(--red);font-size:1.25rem;font-style:italic;margin:8px 0 16px}
+.hero p.sub{max-width:70ch;margin:0 auto 32px;color:#D8D8D8;font-size:1rem}
+.hero .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+/* ------------------------------ Secciones ------------------------------- */
+section.bloque{padding:64px 0}
+@media(min-width:821px){section.bloque{padding:96px 0}}
+section.bloque.alt{background:var(--dark)}
+.kicker{color:var(--gray);letter-spacing:.14em;font-size:.8rem;font-weight:700;
+  text-transform:uppercase;text-align:center}
+h2.titulo{text-align:center;font-size:1.953rem;margin:8px 0 16px;letter-spacing:.04em}
+p.intro{text-align:center;color:var(--gray);max-width:70ch;margin:0 auto 48px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+@media(max-width:820px){.grid3,.grid2{grid-template-columns:1fr}}
+/* Tablas del panel (Guía / Administración): en pantallas angostas se
+   desplazan horizontalmente en vez de romper el layout. */
+@media(max-width:820px){table.tabla{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.tabla th,table.tabla td{white-space:nowrap}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:24px}
+.card h3{color:var(--white);letter-spacing:.04em;margin-bottom:8px;font-size:1.25rem}
+.card p{color:#D8D8D8;font-size:1rem}
+
+/* Pasos / rangos */
+.pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+@media(max-width:820px){.pasos{grid-template-columns:1fr}}
+.paso{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px}
+.paso .num{color:var(--white);font-size:1.5625rem;font-weight:800}
+.paso h3{margin:8px 0;font-size:1.25rem}
+.paso p{color:var(--gray);font-size:1rem}
+.rangos{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.rango-card{flex:1 1 180px;max-width:200px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;
+  padding:24px;text-align:center}
+.rango-card .r-nombre{font-weight:800;letter-spacing:.14em;font-size:1.25rem}
+.rango-card .r-frase{color:var(--gray);font-style:italic;font-size:1rem;margin:8px 0}
+.rango-card p{color:var(--gray);font-size:1rem}
+.rango-card .flecha{color:#444;font-size:1.25rem}
+
+.cta-final{text-align:center}
+footer.site{border-top:1px solid #222;padding:32px 24px;text-align:center;
+  color:var(--gray);font-size:1rem}
+footer.site .f-motto{color:var(--gray);font-style:italic}
+
+/* Recorrido en pasos numerados (modo presentación — B1-32) */
+.pasos-recorrido{display:flex;gap:24px;flex-wrap:wrap;margin:0 0 24px;
+  padding:0;list-style:none}
+.pasos-recorrido li{display:flex;gap:8px;align-items:baseline;color:var(--gray);
+  font-size:1rem}
+.pasos-recorrido .n{color:var(--white);font-weight:800;font-size:1.25rem}
+
+/* ------------------------------ Formularios ----------------------------- */
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:flex-start;
+  justify-content:center;padding:48px 16px}
+.auth-card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:32px;width:100%;max-width:430px}
+.auth-card h1{font-size:1.5625rem;margin-bottom:8px}
+.auth-card p.sub{color:var(--gray);font-size:1rem;margin-bottom:24px}
+.tabs{display:flex;gap:8px;margin-bottom:24px}
+.tabs button{flex:1;background:transparent;border:1px solid #333;color:var(--gray);
+  border-radius:8px;padding:8px;cursor:pointer;font-size:1rem}
+.tabs button.activo{border-color:var(--red);color:#fff;background:rgba(227,66,52,.15);
+  font-weight:700}
+.tabs button:active{transform:scale(.98)}
+label.campo{display:block;font-size:1rem;color:var(--gray);margin:16px 0 8px}
+input[type=text],input[type=email],input[type=password],input[type=date],input[type=tel],select{
+  width:100%;background:#101010;border:1px solid #333;border-radius:8px;
+  color:var(--white);padding:12px;font-size:1rem}
+input:focus,select:focus{outline:1px solid var(--red);border-color:var(--red)}
+.auth-card .btn{width:100%;margin-top:24px}
+.campo-error{display:none;color:var(--err-txt);font-size:1rem;margin-top:8px}
+.campo-error.visible{display:block}
+.aviso{border-radius:8px;padding:16px;font-size:1rem;margin:16px 0;display:none}
+.aviso.visible{display:block}
+.aviso.error{background:rgba(227,66,52,.14);border:1px solid var(--red);color:#FFD9D4}
+.aviso.ok{background:rgba(63,163,77,.14);border:1px solid var(--ok);color:#D6F2DA}
+.aviso.demo{background:rgba(232,163,61,.12);border:1px solid var(--warn);color:#F5E3C0}
+.cartel-confirmacion,.cartel-recuperacion{display:none;border:2px solid var(--ok);background:rgba(63,163,77,.12);
+  border-radius:12px;padding:24px;text-align:center;margin:16px 0}
+.cartel-confirmacion.visible,.cartel-recuperacion.visible{display:block}
+.cartel-confirmacion img.marca,.cartel-recuperacion img.marca{width:56px;height:56px;margin-bottom:8px}
+.cartel-confirmacion h2,.cartel-recuperacion h2{font-size:1.5625rem;margin:8px 0 16px}
+.cartel-confirmacion p,.cartel-recuperacion p{color:#E6E6E6;margin:8px 0}
+.cartel-confirmacion .cartel-kicker,.cartel-recuperacion .cartel-kicker{color:#8FD79B;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;font-size:.8rem}
+.cartel-confirmacion .cartel-nota,.cartel-recuperacion .cartel-nota{color:var(--gray);font-size:1rem}
+.cartel-confirmacion .btn,.cartel-recuperacion .btn{margin-top:16px}
+.link-button{display:block;margin:16px auto 0;background:none;border:0;color:var(--red);
+  font:inherit;font-size:1rem;font-weight:700;cursor:pointer;text-decoration:underline;
+  text-underline-offset:3px}
+.auth-subtitle{font-size:1.25rem;margin-bottom:8px}
+.form-help{color:var(--gray);font-size:1rem;margin-bottom:8px}
+.volver{display:block;text-align:center;margin-top:16px;color:var(--gray);
+  text-decoration:none;font-size:1rem}
+.enlace-texto{color:var(--white);text-decoration:underline;text-underline-offset:3px}
+
+/* -------------------------------- Panel --------------------------------- */
+.panel-head{display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;padding:24px 0 8px}
+.miembro-id{display:flex;align-items:center;gap:16px}
+.miembro-id img{width:56px;height:56px}
+.miembro-id .nombre{font-size:1.5625rem;font-weight:800}
+.badge{display:inline-block;border-radius:999px;padding:2px 12px;font-size:.8rem;
+  font-weight:700;letter-spacing:.06em;vertical-align:middle}
+.badge.rango{background:var(--red-dark);color:#fff}
+.badge.lvz{background:transparent;border:1px solid #444;color:var(--gray)}
+.badge.casa{background:rgba(232,163,61,.16);color:var(--warn);border:1px solid var(--warn)}
+.badge.celula{background:rgba(90,140,220,.14);color:#9DB9E8;border:1px solid #5A8CDC}
+.badge.pendiente{background:#2A2A2A;color:var(--gray);border:1px solid #3A3A3A}
+.badge.en_revision{background:rgba(232,163,61,.16);color:var(--warn);border:1px solid var(--warn)}
+.badge.aprobada{background:rgba(63,163,77,.16);color:#8FD79B;border:1px solid var(--ok)}
+.badge.rechazada{background:rgba(227,66,52,.14);color:#FFB4AB;border:1px solid var(--red)}
+.seccion{margin:32px 0}
+.seccion > h2{font-size:1.5625rem;margin-bottom:8px}
+.seccion > p.desc{color:var(--gray);font-size:1rem;margin-bottom:16px;max-width:75ch}
+.progreso-barra{background:#222;border-radius:999px;height:16px;overflow:hidden;margin:8px 0}
+.progreso-barra > div{background:linear-gradient(90deg,var(--red-dark),var(--red));
+  height:100%;width:0;transition:width .3s ease}
+.progreso-txt{color:var(--gray);font-size:1rem}
+.pilar-titulo{color:var(--gray);letter-spacing:.14em;font-size:.8rem;font-weight:700;
+  margin:24px 0 8px;text-transform:uppercase}
+.mision{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:24px;margin-bottom:16px}
+.mision.proxima{border:2px solid var(--red)}
+.siguiente-etiqueta{color:var(--err-txt);font-weight:800;letter-spacing:.14em;
+  font-size:.8rem;text-transform:uppercase;margin-bottom:8px}
+.mision .m-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  align-items:flex-start}
+.mision h3{font-size:1.25rem}
+.mision p{color:#CFCFCF;font-size:1rem;margin:8px 0}
+.mision .regla{color:var(--warn);font-size:1rem;font-style:italic}
+.mision .pts{color:var(--gray);font-size:1rem;white-space:nowrap}
+.mision .acciones{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=file]{color:var(--gray);font-size:1rem}
+table.tabla{width:100%;border-collapse:collapse;font-size:1rem}
+table.tabla th,table.tabla td{border-bottom:1px solid var(--line);
+  padding:8px;text-align:left;vertical-align:middle}
+table.tabla th{color:var(--gray);font-weight:600;letter-spacing:.04em;font-size:.8rem;
+  text-transform:uppercase}
+table.tabla select{width:auto;padding:8px;font-size:1rem}
+
+/* Esqueleto de carga (B1-29): incompatible a la vista con un estado vacío.
+   Solo pulsa opacidad; el contenido real lo reemplaza al cargar. */
+.skl{display:block;background:#232323;border-radius:8px;
+  animation:sklPulso 1.2s ease-in-out infinite}
+.skl.nombre{width:220px;max-width:60vw;height:32px}
+.skl.linea{height:16px;margin:8px 0}
+.skl.mision{height:96px;margin-bottom:16px}
+@keyframes sklPulso{0%,100%{opacity:.55}50%{opacity:1}}
+
+/* Carnet */
+.carnet{width:100%;max-width:430px;aspect-ratio:1.586;border-radius:14px;
+  background:linear-gradient(135deg,#101010 0%,#1A0505 55%,#0A0A0A 100%);
+  border:2px solid var(--red);padding:24px;position:relative;overflow:hidden;
+  color:var(--white)}
+.carnet::after{content:"";position:absolute;right:-40px;top:-40px;width:170px;
+  height:170px;border-radius:50%;border:2px solid rgba(227,66,52,.25)}
+.carnet .c-head{display:flex;align-items:center;gap:8px}
+.carnet .c-head img{width:44px;height:44px}
+.carnet .c-head .c-brand{font-weight:800;letter-spacing:.14em;font-size:1.25rem}
+.carnet .c-head .c-sub{color:var(--gray);font-size:.75rem;letter-spacing:.14em}
+.carnet .c-nombre{margin-top:24px;font-size:1.25rem;font-weight:700;letter-spacing:.02em}
+.carnet .c-fila{display:flex;gap:24px;margin-top:8px}
+.carnet .c-fila .k{color:var(--gray);font-size:.75rem;letter-spacing:.14em}
+.carnet .c-fila .v{font-size:1rem;font-weight:700;color:var(--white)}
+.carnet .c-motto{position:absolute;bottom:16px;left:24px;color:#D8D8D8;
+  font-style:italic;font-size:1rem}
+.demo-switch{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  background:rgba(232,163,61,.08);border:1px dashed var(--warn);border-radius:8px;
+  padding:16px;font-size:1rem;color:#F5E3C0;margin:16px 0}
+.demo-switch button{background:transparent;border:1px solid var(--warn);color:var(--warn);
+  border-radius:999px;padding:4px 16px;cursor:pointer;font-size:1rem}
+.demo-switch button.activo{background:var(--warn);color:#111;font-weight:700}
+
+/* Administración por pestañas (Fundador) */
+.tabs-admin{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.tabbtn{background:#141414;border:1px solid #333;color:#CFCFCF;border-radius:999px;padding:8px 16px;font:inherit;font-size:1.1875rem;cursor:pointer}
+.tabbtn.activa{background:#E34234;border-color:#E34234;color:#fff;font-weight:700}
+.tabbtn:active{transform:scale(.98)}
+.badge-n{background:#fff;color:#B3251B;border-radius:999px;padding:0 7px;font-weight:800;font-size:.8rem}
+
+/* Celebración (ascenso, primer ingreso, primera misión aprobada) */
+.celebracion{border:2px solid #E34234;background:linear-gradient(180deg,#1d0f0c,#101010);border-radius:14px;padding:24px;margin-bottom:24px}
+.celebracion .cel-kicker{color:var(--err-txt);font-weight:800;letter-spacing:.14em;font-size:.8rem}
+.celebracion .cel-titulo{font-size:1.953rem;margin:8px 0;color:#fff}
+
+/* Ojito mostrar/ocultar contraseña: pequeño y discreto, dentro del campo */
+.campo-pass{position:relative;display:block}
+.campo-pass input{width:100%;padding-right:46px}
+.ver-pass{position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;color:#8f8f8f;cursor:pointer;padding:0;width:44px;height:44px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;opacity:.65}
+.ver-pass .ojo-off{display:none}
+.ver-pass.viendo .ojo-on{display:none}
+.ver-pass.viendo .ojo-off{display:block}
+
+/* Movimiento reducido (B1-25): sin scroll suave, sin pulsos ni giros;
+   quedan, como máximo, fundidos cortos de opacidad. */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
