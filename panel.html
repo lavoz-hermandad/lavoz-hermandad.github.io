@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-exqmAYTL9rfC512QX0MSUNNK2IU95u5ZWW12J9OGUT4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: https://kgphnxetehgtlrjyvhmg.supabase.co; connect-src 'self' https://kgphnxetehgtlrjyvhmg.supabase.co wss://kgphnxetehgtlrjyvhmg.supabase.co https://api.pwnedpasswords.com; object-src 'none'; base-uri 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eM1bvJlNVsudG6NGYjxAloj3RqSBv6huiGeqcgE7l+I='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: https://kgphnxetehgtlrjyvhmg.supabase.co; connect-src 'self' https://kgphnxetehgtlrjyvhmg.supabase.co wss://kgphnxetehgtlrjyvhmg.supabase.co https://api.pwnedpasswords.com; object-src 'none'; base-uri 'self'">
 <title>Mi panel — LA VOZ</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
@@ -989,11 +989,11 @@ function renderGuia() {
 
   /* Revisiones pendientes de los hermanos de mi célula */
   const revisiones = [];
-  ESTADO.miembrosCelula.forEach(hermano => {
+  ESTADO.miembrosCelula.forEach(miembro => {
     const prog = ESTADO.progresoCelula[miembro.id] || {};
     Object.keys(prog).forEach(mid => {
       if (prog[mid].estado === "en_revision" && MISION_POR_ID[mid]) {
-        revisiones.push({ hermano, mision: MISION_POR_ID[mid], registro: prog[mid] });
+        revisiones.push({ miembro, mision: MISION_POR_ID[mid], registro: prog[mid] });
       }
     });
   });
@@ -1375,7 +1375,7 @@ function renderAdmin() {
   const guiaDeOtra = id => celulasAdmin.some(x => x.guide_id === id);
   const filasCelulas = celulasAdmin.map(c => {
     const guia = c.guide_id ? porId[c.guide_id] : null;
-    const hermanos = (ESTADO.todosMiembros || []).filter(m => m.cell_id === c.id);
+    const miembros = (ESTADO.todosMiembros || []).filter(m => m.cell_id === c.id);
     const opcionesGuia = [`<option value="">— Sin guía —</option>`]
       .concat((ESTADO.todosMiembros || [])
         .filter(m => m.id === c.guide_id || !guiaDeOtra(m.id))
@@ -1789,8 +1789,8 @@ async function adminAsignarRango(usuarioId) {
   const sel = document.getElementById("rango-" + usuarioId);
   if (!sel) return;
   const nuevoRango = sel.value;
-  const hermano = ESTADO.todosMiembros.find(m => m.id === usuarioId);
-  if (!hermano || miembro.rank === nuevoRango) {
+  const miembro = ESTADO.todosMiembros.find(m => m.id === usuarioId);
+  if (!miembro || miembro.rank === nuevoRango) {
     mostrarAviso("Ese hermano ya tiene el rango " + nombreRango(nuevoRango) + ".", "demo");
     return;
   }
